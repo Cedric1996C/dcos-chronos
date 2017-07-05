@@ -8,4 +8,5 @@ build:
     - build-in-docker
   script:
     - npm install
+    - npm run scaffold
     - npm run build-assets
