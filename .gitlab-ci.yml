@@ -1,0 +1,10 @@
+stages:
+  - build-assets
+
+build:
+  - stage: build-assets
+  - tags:
+    - build-in-docker
+  script:
+    - npm install
+    - npm run build-assets
