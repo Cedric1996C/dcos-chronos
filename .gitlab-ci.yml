@@ -2,8 +2,9 @@ stages:
   - build-assets
 
 build:
-  - stage: build-assets
-  - tags:
+  image: registry.njuics.cn/nap/dcos-ui-base
+  stage: build-assets
+  tags:
     - build-in-docker
   script:
     - npm install
