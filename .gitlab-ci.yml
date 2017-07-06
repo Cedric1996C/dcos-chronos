@@ -10,3 +10,6 @@ build:
     - npm install
     - npm run scaffold
     - npm run build-assets
+  artifacts:
+    paths:
+      - dist
