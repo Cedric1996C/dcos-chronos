@@ -10,6 +10,7 @@ build:
     - npm install
     - npm run scaffold
     - npm run build-assets
+    - tar -czf dist.tar.gz ./dist/*
   artifacts:
     paths:
-      - dist
+      - dist.tar.gz
