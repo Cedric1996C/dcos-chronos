@@ -5,8 +5,8 @@ ff## DCOS-UI
 
 ### 下载并运行
 
-  * 下载(dcos-ui)[https://github.com/dcos/dcos-ui]到本地
-  * 下载(这个压缩文件 密码: xyiy)[https://pan.baidu.com/s/1dFjBLTJ]，解压后把 <html>marathon</html> 目录和  <html>v2</html> 目录放到 <html>src/resources/raml</html> 目录下，形成如下目录结构( xml 表示)。
+  * 下载[dcos-ui](https://github.com/dcos/dcos-ui)到本地
+  * 下载[这个压缩文件 密码: xyiy](https://pan.baidu.com/s/1dFjBLTJ)，解压后把 <html>marathon</html> 目录和  <html>v2</html> 目录放到 <html>src/resources/raml</html> 目录下，形成如下目录结构( xml 表示)。
 
 ```xml
 <src type="directory">
@@ -45,7 +45,7 @@ module.exports = {
 };
 ```
 
-  * 运行以下命令，运行浏览器跳转到[[http://localhost:4200|http://localhost:4200]]
+  * 运行以下命令，运行浏览器跳转到[http://localhost:4200](http://localhost:4200)
 
 ```sh
 npm start
@@ -121,7 +121,7 @@ module.exports = {
 };
 ```
 
-  * 运行，并打开浏览器跳转到(http://localhost:4200)[http://localhost:4200]，可以看到界面上的数据发生了变化
+  * 运行，并打开浏览器跳转到[http://localhost:4200](http://localhost:4200)，可以看到界面上的数据发生了变化
 
 ```sh
 npm start
