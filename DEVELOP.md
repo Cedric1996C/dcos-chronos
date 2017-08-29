@@ -1,4 +1,4 @@
-ff## DCOS-UI
+## DCOS-UI
 
 > node 版本号：4.4.x
 > npm 版本号：3.9.x，最好不要用 cnpm，会报奇怪的错误
