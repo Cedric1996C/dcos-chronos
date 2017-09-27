@@ -45,8 +45,8 @@ class LoginPage extends mixin(StoreMixin) {
   }
 
   onMessageReceived(event) {
-    console.log('looooooooooged!!!  event.origin', event.origin)
-    // if (event.origin !== SDK.config.authHost) { 
+    console.log("looooooooooged!!!event.origin", event.origin);
+    // if (event.origin !== SDK.config.authHost){
     // console.log(SDK.config)
     // if(event.origin !== 'http://localhost:4200'){
     //   console.warn(
@@ -86,11 +86,9 @@ class LoginPage extends mixin(StoreMixin) {
   }
 
   render() {
-    const firstUser = SDK.Store.getAppState().config.config.clusterConfiguration
-      .firstUser; 
+    // const firstUser = SDK.Store.getAppState().config.config.clusterConfiguration.firstUser;
     // const location = `/login?firstUser=${firstUser}`;
-    // const location = `/login?firstUser=${firstUser}`;
-    const location = 'http://localhost:3000';
+    const location = "http://localhost:3000";
 
     return (
       <div>
