@@ -87,10 +87,10 @@ class LoginPage extends mixin(StoreMixin) {
 
   render() {
     const firstUser = SDK.Store.getAppState().config.config.clusterConfiguration
-      .firstUser;
-
+      .firstUser; 
     // const location = `/login?firstUser=${firstUser}`;
-    const location = `/login?firstUser=${firstUser}`;
+    // const location = `/login?firstUser=${firstUser}`;
+    const location = 'http://localhost:3000';
 
     return (
       <div>
