@@ -64,9 +64,8 @@ module.exports = Object.assign({}, webpackConfig, {
     new ExtractTextPlugin("./[name].[hash].css"),
 
     new webpack.optimize.CommonsChunkPlugin(
-      "vendor",
-      "vendor.[hash].js",
-      Infinity
+      { name: "vendor",
+        filename: "vendor.[hash].js" }
     ),
 
     new HtmlWebpackPlugin({

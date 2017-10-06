@@ -248,7 +248,7 @@ var DashboardPage = React.createClass({
               <TasksChart tasks={data.tasks} />
             </Panel>
           </div>
-          {/*<div className={columnClasses}>
+          <div className={columnClasses}>
             <Panel
               className="dashboard-panel dashboard-panel-list dashboard-panel-list-component-health panel"
               heading={this.getHeading(
@@ -262,7 +262,7 @@ var DashboardPage = React.createClass({
                 units={this.getUnits()}
               />
             </Panel>
-          </div>*/}
+          </div>
           <div className={columnClasses}>
             <Panel
               className="dashboard-panel dashboard-panel-chart dashboard-panel-chart-timeseries panel"

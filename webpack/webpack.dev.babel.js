@@ -1,9 +1,9 @@
-import ExtractTextPlugin from "extract-text-webpack-plugin";
-import HtmlWebpackPlugin from "html-webpack-plugin";
+// import ExtractTextPlugin from "extract-text-webpack-plugin";
+// import HtmlWebpackPlugin from "html-webpack-plugin";
 import StringReplacePlugin from "string-replace-webpack-plugin";
-import WebpackNotifierPlugin from "webpack-notifier";
-import webpack from "webpack";
-import SVGCompilerPlugin from "./plugins/svg-compiler-plugin";
+// import WebpackNotifierPlugin from "webpack-notifier";
+// import webpack from "webpack";
+// import SVGCompilerPlugin from "./plugins/svg-compiler-plugin";
 
 import packageInfo from "../package";
 import webpackConfig from "./webpack.config.babel";
@@ -12,7 +12,7 @@ import webpackConfig from "./webpack.config.babel";
 // Can override with npm config set port 80
 const PORT = parseInt(process.env.npm_package_config_port, 10);
 const environment = process.env.NODE_ENV;
-let devtool = null;
+let devtool = false;
 const devServer = {
   proxy: require("./proxy.dev.js"),
   stats: {
@@ -72,33 +72,17 @@ module.exports = Object.assign({}, webpackConfig, {
   entry,
   devtool,
   output: {
-    path: "./build",
+    path:  __dirname + "/build",
     filename: "[name].js"
   },
   devServer,
-  plugins: [
-    new StringReplacePlugin(),
-
-    new HtmlWebpackPlugin({
-      template: "./src/index.html"
-    }),
-
-    new ExtractTextPlugin("./[name].css"),
-
-    new WebpackNotifierPlugin({ alwaysNotify: true }),
-
-    new webpack.optimize.CommonsChunkPlugin("vendor", "vendor.js", Infinity),
-
-    new SVGCompilerPlugin({ baseDir: "src/img/components/icons" })
-  ],
   module: {
-    preLoaders: webpackConfig.module.preLoaders,
-    loaders: webpackConfig.module.loaders.concat([
+    rules: webpackConfig.module.loaders.concat([
       {
         test: /\.js$/,
         // Exclude all node_modules except dcos-dygraphs
         exclude: /(?=\/node_modules\/)(?!\/node_modules\/dcos-dygraphs\/)/,
-        loader: reactHotLoader +
+        use: reactHotLoader +
           "babel?" +
           JSON.stringify({
             cacheDirectory: "/tmp",
@@ -148,6 +132,5 @@ module.exports = Object.assign({}, webpackConfig, {
         })
       }
     ]),
-    postLoaders: webpackConfig.module.postLoaders
   }
 });
