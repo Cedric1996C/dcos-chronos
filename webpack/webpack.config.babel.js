@@ -59,6 +59,9 @@ new Promise(function(resolve, reject) {
 function requireFromString(src, filename) {
   const Module = module.constructor;
   const sourceModule = new Module();
+  if (filename === undefined || filename === null) {
+    filename = ".";
+  }
   sourceModule._compile(src, filename);
 
   return sourceModule.exports;
@@ -148,12 +151,13 @@ module.exports = {
                 // some stupid reason. So this is why we encode the CSS.
                 const encoded = new Buffer(css).toString("base64");
                 const js = `var css = '${encoded}';css = atob(css);var tag = window.document.createElement('style');tag.innerHTML = css;window.document.head.appendChild(tag);`;
+
                 return `<script>${js}</script>`;
               }
             }
           ]
         }),
-        enforce: post
+        enforce: "post"
       }
     ]
   },
@@ -171,8 +175,8 @@ module.exports = {
 
     new WebpackNotifierPlugin({ alwaysNotify: true }),
 
-    new webpack.optimize.CommonsChunkPlugin({ 
-      name: "vendor", 
+    new webpack.optimize.CommonsChunkPlugin({
+      name: "vendor",
       filename: "vendor.js"
     }),
 
@@ -193,14 +197,24 @@ module.exports = {
       PluginTestUtils: absPath("src/js/plugin-bridge/PluginTestUtils"),
       "#EXTERNAL_PLUGINS": externalPluginsDir,
       "#PLUGINS": absPath("plugins"),
-      "#SRC": absPath("src")
+      "#SRC": absPath("src"),
+      later: "later/later.js",
+      "fbjs/lib/memoizeStringOnly": "../node_modules/fbjs/lib/memoizeStringOnly"
     },
-    // extensions: ["",".js", ".less", ".css"],
+    extensions: [".", ".js", ".less", ".css"],
     // root: [absPath(), absPath("node_modules"), absPath("packages")],
-    modules: ["node_modules", "packages"]
+    modules: [
+      absPath("node_modules"),
+      absPath("packages"),
+      path.join(__dirname, "node_modules")
+    ]
   },
 
   resolveLoader: {
-    modules: [absPath("node_modules"), absPath("packages")]
+    modules: [
+      absPath("node_modules"),
+      absPath("packages"),
+      path.join(__dirname, "node_modules")
+    ]
   }
 };

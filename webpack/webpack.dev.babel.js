@@ -5,6 +5,7 @@ import StringReplacePlugin from "string-replace-webpack-plugin";
 // import webpack from "webpack";
 // import SVGCompilerPlugin from "./plugins/svg-compiler-plugin";
 
+import path from "path";
 import packageInfo from "../package";
 import webpackConfig from "./webpack.config.babel";
 
@@ -35,7 +36,7 @@ let dependencies = Object.assign({}, packageInfo.dependencies);
 delete dependencies["canvas-ui"];
 delete dependencies["cnvs"];
 dependencies = Object.keys(dependencies).map(function(dependency) {
-  return "node_modules/" + dependency;
+  return "./node_modules/" + dependency;
 });
 
 const entry = {
@@ -62,17 +63,17 @@ if (environment === "development") {
   };
 }
 
-let reactHotLoader = "react-hot!";
+// let reactHotLoader = "react-hot-loader!";
 
-if (process.env.REACTJS_COMPONENTS_LOCAL) {
-  reactHotLoader = "";
-}
+// if (process.env.REACTJS_COMPONENTS_LOCAL) {
+//   reactHotLoader = "";
+// }
 
 module.exports = Object.assign({}, webpackConfig, {
   entry,
   devtool,
   output: {
-    path:  __dirname + "/build",
+    path: path.join(__dirname, "build"),
     filename: "[name].js"
   },
   devServer,
@@ -82,39 +83,40 @@ module.exports = Object.assign({}, webpackConfig, {
         test: /\.js$/,
         // Exclude all node_modules except dcos-dygraphs
         exclude: /(?=\/node_modules\/)(?!\/node_modules\/dcos-dygraphs\/)/,
-        use: reactHotLoader +
-          "babel?" +
-          JSON.stringify({
-            cacheDirectory: "/tmp",
-            // Map through resolve to fix preset loading problem
-            presets: ["babel-preset-es2015", "babel-preset-react"].map(
-              require.resolve
-            )
-          })
+        loaders: ["react-hot-loader", "babel-loader"]
+        // use: reactHotLoader+
+        //   "babel?" +
+        //   JSON.stringify({
+        //     cacheDirectory: "/tmp",
+        //     // Map through resolve to fix preset loading problem
+        //     presets: ["babel-preset-es2015", "babel-preset-react"].map(
+        //       require.resolve
+        //     )
+        //   })
       },
       {
         test: /\.css$/,
-        loader: "style!css!postcss"
+        loader: "style-loader!css-loader!postcss-loader"
       },
       {
         test: /\.less$/,
-        loader: "style?sourceMap!css?sourceMap!postcss?sourceMap!less?sourceMap"
+        loader: "style-loader!css-loader!postcss-loader!less-loader"
       },
       {
         test: /\.png$/,
-        loader: "file?name=./[hash]-[name].[ext]&limit=100000&mimetype=image/png"
+        loader: "file-loader?name=./[hash]-[name].[ext]&limit=100000&mimetype=image/png"
       },
       {
         test: /\.svg$/,
-        loader: "file?name=./[hash]-[name].[ext]&limit=100000&mimetype=image/svg+xml"
+        loader: "file-loader?name=./[hash]-[name].[ext]&limit=100000&mimetype=image/svg+xml"
       },
       {
         test: /\.gif$/,
-        loader: "file?name=./[hash]-[name].[ext]&limit=100000&mimetype=image/gif"
+        loader: "file-loader?name=./[hash]-[name].[ext]&limit=100000&mimetype=image/gif"
       },
       {
         test: /\.jpg$/,
-        loader: "file?name=./[hash]-[name].[ext]"
+        loader: "file-loader?name=./[hash]-[name].[ext]"
       },
       // Replace @@variables
       {
@@ -131,6 +133,6 @@ module.exports = Object.assign({}, webpackConfig, {
           ]
         })
       }
-    ]),
+    ])
   }
 });

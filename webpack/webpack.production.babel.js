@@ -22,6 +22,7 @@ function addImageOptimizer(loader) {
 const devServer = {
   proxy: require("./proxy.dev.js")
 };
+
 const REPLACEMENT_VARS = {
   VERSION: packageInfo.version,
   ENV: process.env.NODE_ENV
@@ -63,10 +64,10 @@ module.exports = Object.assign({}, webpackConfig, {
 
     new ExtractTextPlugin("./[name].[hash].css"),
 
-    new webpack.optimize.CommonsChunkPlugin(
-      { name: "vendor",
-        filename: "vendor.[hash].js" }
-    ),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: "vendor",
+      filename: "vendor.[hash].js"
+    }),
 
     new HtmlWebpackPlugin({
       filename: "index.html",
