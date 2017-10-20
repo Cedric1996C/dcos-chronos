@@ -74,8 +74,8 @@ module.exports = Object.assign({}, StoreMixin, {
       replace(`/login?redirect=${redirectTo}`);
     } else {
       console.log("new user");
-      window.location = 'http://localhost:3000';
-      // replace(`/login?relativePath=${nextState.location.pathname}`);
+      // window.location = "http://localhost:3000";
+      replace(`/login?relativePath=${nextState.location.pathname}`);
     }
   },
 
