@@ -3,6 +3,10 @@ import PluginSDK, { Hooks } from "PluginSDK";
 import {
   REQUEST_LOGIN_SUCCESS,
   REQUEST_LOGIN_ERROR,
+  REQUEST_LOCALLOGIN_SUCCESS,
+  REQUEST_LOCALLOGIN_ERROR,
+  REQUEST_REFRESHTOKEN_SUCCESS,
+  REQUEST_REFRESHTOKEN_ERROR,
   REQUEST_LOGOUT_SUCCESS,
   REQUEST_LOGOUT_ERROR,
   SERVER_ACTION
@@ -11,8 +15,13 @@ import {
   AUTH_USER_LOGIN_CHANGED,
   AUTH_USER_LOGOUT_SUCCESS,
   AUTH_USER_LOGIN_ERROR,
-  AUTH_USER_LOGOUT_ERROR
+  AUTH_USER_LOGOUT_ERROR,
+  AUTH_USER_LOCALLOGIN_SUCCESS,
+  AUTH_USER_REFRESHTOKEN_SUCCESS,
+  AUTH_USER_REFRESHTOKEN_ERROR,
+  AUTH_USER_LOCALLOGIN_ERROR
 } from "../constants/EventTypes";
+
 import AppDispatcher from "../events/AppDispatcher";
 import AuthActions from "../events/AuthActions";
 import CookieUtils from "../utils/CookieUtils";
@@ -28,6 +37,10 @@ class AuthStore extends GetSetBaseStore {
       events: {
         success: AUTH_USER_LOGIN_CHANGED,
         error: AUTH_USER_LOGIN_ERROR,
+        localLoginSuccess: AUTH_USER_LOCALLOGIN_SUCCESS,
+        localLoginError: AUTH_USER_LOCALLOGIN_ERROR,
+        refreshTokenSuccess: AUTH_USER_REFRESHTOKEN_SUCCESS,
+        refreshTokenError: AUTH_USER_REFRESHTOKEN_ERROR,
         logoutSuccess: AUTH_USER_LOGOUT_SUCCESS,
         logoutError: AUTH_USER_LOGOUT_ERROR
       },
@@ -50,6 +63,18 @@ class AuthStore extends GetSetBaseStore {
         case REQUEST_LOGIN_ERROR:
           this.emit(AUTH_USER_LOGIN_ERROR, action.data, action.xhr);
           break;
+        case REQUEST_LOCALLOGIN_SUCCESS:
+          this.processLocalLoginSuccess();
+          break;
+        case REQUEST_LOCALLOGIN_ERROR:
+          this.emit(REQUEST_LOCALLOGIN_ERROR, action.data, action.xhr);
+          break;
+        case REQUEST_REFRESHTOKEN_SUCCESS:
+          this.processRefreshTokenSuccess();
+          break;
+        case REQUEST_REFRESHTOKEN_ERROR:
+          this.emit(REQUEST_REFRESHTOKEN_ERROR, action.data, action.xhr);
+          break;
         case REQUEST_LOGOUT_SUCCESS:
           this.processLogoutSuccess();
           break;
@@ -71,11 +96,11 @@ class AuthStore extends GetSetBaseStore {
   }
 
   login(token) {
-    //register user uid
+    // register user uid
     // console.log(token)
-    var t = token.token
+    var t = token.token;
     // console.log( t, t.uid)
-    CookieUtils.setUserCookie(t.uid, new Date())
+    CookieUtils.setUserCookie(t.uid, new Date());
 
     AuthActions.login(...arguments);
   }
@@ -98,20 +123,24 @@ class AuthStore extends GetSetBaseStore {
 
     try {
       // return JSON.parse(atob(userCode));
-      return userCode
+      return userCode;
     } catch (err) {
       return null;
     }
   }
 
   processLoginSuccess() {
-    //initiate cookie manually
+    // initiate cookie manually
     // console.log('set usercode')
     // global.document.cookie = CookieUtils.setUserCookie(new Date())
     // console.log(global.document.cookie)
     Hooks.doAction("userLoginSuccess");
     this.emit(AUTH_USER_LOGIN_CHANGED);
   }
+
+  processLocalLoginSuccess() {}
+
+  processRefreshTokenSuccess() {}
 
   processLogoutSuccess() {
     global.document.cookie = CookieUtils.emptyCookieWithExpiry(new Date(1970));
