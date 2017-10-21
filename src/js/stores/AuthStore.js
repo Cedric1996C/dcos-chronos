@@ -79,6 +79,7 @@ class AuthStore extends GetSetBaseStore {
           this.processLogoutSuccess();
           break;
         case REQUEST_LOGOUT_ERROR:
+          console.log("logout error");
           this.emit(AUTH_USER_LOGOUT_ERROR, action.data);
           break;
       }

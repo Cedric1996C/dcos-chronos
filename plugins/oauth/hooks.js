@@ -8,7 +8,10 @@ import { StoreMixin } from "mesosphere-shared-reactjs";
 import AuthenticatedUserAccountDropdown
   from "./components/AuthenticatedUserAccountDropdown";
 import LoginPage from "./components/LoginPage";
+import config from './config';
 
+const { Url } = require('url');
+const querystring = require('querystring');
 const SDK = require("./SDK").getSDK();
 
 const {
@@ -67,15 +70,27 @@ module.exports = Object.assign({}, StoreMixin, {
     this.registerUserAccountDropdown();
   },
 
+  navigateToLoginPage() { 
+    var auth = new Url();
+    auth.href = config.authUrl;
+    auth.query = querystring.stringify({
+      client_id: config.clientId,
+      redirect_url: config.redirectUrl
+    });
+    // global.location.href = "#/login";
+    global.location.href = `${auth.href}/?${auth.query}`;
+  },
+
   redirectToLogin(nextState, replace) {
     const redirectTo = RouterUtil.getRedirectTo();
+    console.log(redirectTo);
     // Ignores relative path if redirect is present
     if (redirectTo) {
       replace(`/login?redirect=${redirectTo}`);
     } else {
-      console.log("new user");
-      // window.location = "http://localhost:3000";
-      replace(`/login?relativePath=${nextState.location.pathname}`);
+      console.log('before navigate');
+      this.navigateToLoginPage();
+      // replace(`/login?relativePath=${nextState.location.pathname}`);
     }
   },
 
@@ -229,9 +244,6 @@ module.exports = Object.assign({}, StoreMixin, {
 
     // Let's wait till login and then we'll request mesos summary before render
     return false;
-  },
-
-  navigateToLoginPage() {
-    global.location.href = "#/login";
   }
+
 });

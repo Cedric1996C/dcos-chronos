@@ -41,20 +41,24 @@ const AuthActions = {
   },
 
   logout() {
-    RequestUtil.json({
-      url: `${Config.rootUrl}${Config.acsAPIPrefix}/auth/logout`,
-      success() {
-        AppDispatcher.handleServerAction({
-          type: REQUEST_LOGOUT_SUCCESS
-        });
-      },
-      error(xhr) {
-        AppDispatcher.handleServerAction({
-          type: REQUEST_LOGOUT_ERROR,
-          data: RequestUtil.getErrorFromXHR(xhr),
-          xhr
-        });
-      }
+    // console.log(Config.rootUrl);
+    // RequestUtil.json({
+    //   url: `${Config.rootUrl}${Config.acsAPIPrefix}/auth/logout`,
+    //   success() {
+    //     AppDispatcher.handleServerAction({
+    //       type: REQUEST_LOGOUT_SUCCESS
+    //     });
+    //   },
+    //   error(xhr) {
+    //     AppDispatcher.handleServerAction({
+    //       type: REQUEST_LOGOUT_ERROR,
+    //       data: RequestUtil.getErrorFromXHR(xhr),
+    //       xhr
+    //     });
+    //   }
+    // });
+    AppDispatcher.handleServerAction({
+      type: REQUEST_LOGOUT_SUCCESS
     });
   }
 };
