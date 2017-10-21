@@ -8,10 +8,10 @@ import { StoreMixin } from "mesosphere-shared-reactjs";
 import AuthenticatedUserAccountDropdown
   from "./components/AuthenticatedUserAccountDropdown";
 import LoginPage from "./components/LoginPage";
-import config from './config';
+import config from "./config";
 
-const { Url } = require('url');
-const querystring = require('querystring');
+const { Url } = require("url");
+const querystring = require("querystring");
 const SDK = require("./SDK").getSDK();
 
 const {
@@ -70,7 +70,7 @@ module.exports = Object.assign({}, StoreMixin, {
     this.registerUserAccountDropdown();
   },
 
-  navigateToLoginPage() { 
+  navigateToLoginPage() {
     var auth = new Url();
     auth.href = config.authUrl;
     auth.query = querystring.stringify({
@@ -88,7 +88,7 @@ module.exports = Object.assign({}, StoreMixin, {
     if (redirectTo) {
       replace(`/login?redirect=${redirectTo}`);
     } else {
-      console.log('before navigate');
+      console.log("before navigate");
       this.navigateToLoginPage();
       // replace(`/login?relativePath=${nextState.location.pathname}`);
     }
@@ -127,7 +127,7 @@ module.exports = Object.assign({}, StoreMixin, {
   },
 
   applicationRoutes(routes) {
-    // Override handler of index to be 'authenticated'
+    // Override handler of index to be "authenticated"
     routes[0].children.forEach(function(child) {
       if (child.id === "index") {
         child.component = new Authenticated(child.component);
@@ -228,7 +228,7 @@ module.exports = Object.assign({}, StoreMixin, {
   },
 
   userLogoutSuccess() {
-    // Reload configuration because we need to get 'firstUser' which is
+    // Reload configuration because we need to get "firstUser" which is
     // dynamically set based on number of users
     configResponseCallback = this.navigateToLoginPage;
     ConfigStore.fetchConfig();
@@ -237,13 +237,12 @@ module.exports = Object.assign({}, StoreMixin, {
   delayApplicationLoad(value) {
     const user = AuthStore.getUser();
 
-    // If user is logged in, then let's let the app do its thing
+    // If user is logged in, then let"s let the app do its thing
     if (user) {
       return value;
     }
 
-    // Let's wait till login and then we'll request mesos summary before render
+    // Let"s wait till login and then we"ll request mesos summary before render
     return false;
   }
-
 });

@@ -1,45 +1,47 @@
-import { RequestUtil } from "mesosphere-shared-reactjs";
+// import { RequestUtil } from "mesosphere-shared-reactjs";
 
 import {
   REQUEST_LOGIN_SUCCESS,
-  REQUEST_LOGIN_ERROR,
-  REQUEST_LOGOUT_SUCCESS,
-  REQUEST_LOGOUT_ERROR
+  // REQUEST_LOGIN_ERROR,
+  REQUEST_LOGOUT_SUCCESS
+  // REQUEST_LOGOUT_ERROR
 } from "../constants/ActionTypes";
 import AppDispatcher from "../events/AppDispatcher";
 import Config from "../config/Config";
 
 const AuthActions = {
   login(credentials, target) {
-    let query = "";
+    // let query = "";
     if (target) {
-      query = `?target=${encodeURIComponent(target)}`;
+      // query = `?target=${encodeURIComponent(target)}`;
+      console.log("login to cluster");
     }
-    console.log("login to cluster")
+    console.log("login to cluster");
+    // AppDispatcher.handleServerAction({
+    //   type: REQUEST_LOGIN_SUCCESS
+    // });
+    // return;
+    // RequestUtil.json({
+    //   url: `${Config.rootUrl}${Config.acsAPIPrefix}/auth/login${query}`,
+    //   method: "POST",
+    //   data: credentials,
+    //   success() {
+    //     AppDispatcher.handleServerAction({
+    //       type: REQUEST_LOGIN_SUCCESS
+    //     });
+    //   },
+    //   error(xhr) {
+    //     AppDispatcher.handleServerAction({
+    //       type: REQUEST_LOGIN_ERROR,
+    //       data: RequestUtil.getErrorFromXHR(xhr),
+    //       xhr
+    //     });
+    //   }
+    // });
     AppDispatcher.handleServerAction({
-          type: REQUEST_LOGIN_SUCCESS
-        });
-        return
-
-    RequestUtil.json({
-      url: `${Config.rootUrl}${Config.acsAPIPrefix}/auth/login${query}`,
-      method: "POST",
-      data: credentials,
-      success() {
-        AppDispatcher.handleServerAction({
-          type: REQUEST_LOGIN_SUCCESS
-        });
-      },
-      error(xhr) {
-        AppDispatcher.handleServerAction({
-          type: REQUEST_LOGIN_ERROR,
-          data: RequestUtil.getErrorFromXHR(xhr),
-          xhr
-        });
-      }
+      type: REQUEST_LOGIN_SUCCESS
     });
   },
-
   logout() {
     // console.log(Config.rootUrl);
     // RequestUtil.json({
