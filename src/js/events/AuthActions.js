@@ -1,10 +1,10 @@
-// import { RequestUtil } from "mesosphere-shared-reactjs";
+import { RequestUtil } from "mesosphere-shared-reactjs";
 
 import {
   REQUEST_LOGIN_SUCCESS,
-  // REQUEST_LOGIN_ERROR,
-  REQUEST_LOGOUT_SUCCESS
-  // REQUEST_LOGOUT_ERROR
+  REQUEST_LOGIN_ERROR,
+  REQUEST_LOGOUT_SUCCESS,
+  REQUEST_LOGOUT_ERROR
 } from "../constants/ActionTypes";
 import AppDispatcher from "../events/AppDispatcher";
 import Config from "../config/Config";
@@ -12,15 +12,15 @@ import Config from "../config/Config";
 const AuthActions = {
   login(credentials, target) {
     // let query = "";
-    if (target) {
-      // query = `?target=${encodeURIComponent(target)}`;
-      console.log("login to cluster");
-    }
+    // if (target) {
+    //   // query = `?target=${encodeURIComponent(target)}`;
+    //   console.log("login to cluster");
+    // }
     console.log("login to cluster");
-    // AppDispatcher.handleServerAction({
-    //   type: REQUEST_LOGIN_SUCCESS
-    // });
-    // return;
+    AppDispatcher.handleServerAction({
+      type: REQUEST_LOGIN_SUCCESS
+    });
+    return;
     // RequestUtil.json({
     //   url: `${Config.rootUrl}${Config.acsAPIPrefix}/auth/login${query}`,
     //   method: "POST",
@@ -38,10 +38,8 @@ const AuthActions = {
     //     });
     //   }
     // });
-    AppDispatcher.handleServerAction({
-      type: REQUEST_LOGIN_SUCCESS
-    });
   },
+
   logout() {
     // console.log(Config.rootUrl);
     // RequestUtil.json({
@@ -65,16 +63,16 @@ const AuthActions = {
   }
 };
 
-if (Config.useFixtures) {
-  AuthActions.login = function() {
-    // base64 encoded - {is_remote: false, uid: "bootstrapuser", description: "Bootstrap superuser"}
-    global.document.cookie =
-      "dcos-acs-info-cookie=" +
-      "eyJ1aWQiOiJqb2UiLCJkZXNjcmlwdGlvbiI6IkpvZSBEb2UifQ==";
-    AppDispatcher.handleServerAction({
-      type: REQUEST_LOGIN_SUCCESS
-    });
-  };
-}
+// if (Config.useFixtures) {
+//   AuthActions.login = function() {
+//     // base64 encoded - {is_remote: false, uid: "bootstrapuser", description: "Bootstrap superuser"}
+//     global.document.cookie =
+//       "dcos-acs-info-cookie=" +
+//       "eyJ1aWQiOiJqb2UiLCJkZXNjcmlwdGlvbiI6IkpvZSBEb2UifQ==";
+//     AppDispatcher.handleServerAction({
+//       type: REQUEST_LOGIN_SUCCESS
+//     });
+//   };
+// }
 
 module.exports = AuthActions;

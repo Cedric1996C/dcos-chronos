@@ -4,10 +4,9 @@ import React from "react";
 /* eslint-enable no-unused-vars */
 import { Redirect, Route, hashHistory } from "react-router";
 import { StoreMixin } from "mesosphere-shared-reactjs";
+import reqwest from "reqwest";
 
-import AuthenticatedUserAccountDropdown
-  from "./components/AuthenticatedUserAccountDropdown";
-import LoginPage from "./components/LoginPage";
+import AuthenticatedUserAccountDropdown from "./components/AuthenticatedUserAccountDropdown";
 import config from "./config";
 
 const { Url } = require("url");
@@ -22,7 +21,8 @@ const {
   ConfigStore,
   CookieUtils,
   RouterUtil,
-  UsersPage
+  UsersPage,
+  MetadataStore
 } = SDK.get([
   "AccessDeniedPage",
   "ApplicationUtil",
@@ -31,7 +31,8 @@ const {
   "ConfigStore",
   "CookieUtils",
   "RouterUtil",
-  "UsersPage"
+  "UsersPage",
+  "MetadataStore",
 ]);
 
 let configResponseCallback = null;
@@ -74,6 +75,7 @@ module.exports = Object.assign({}, StoreMixin, {
     var auth = new Url();
     auth.href = config.authUrl;
     auth.query = querystring.stringify({
+      response_type: 'code',
       client_id: config.clientId,
       redirect_url: config.redirectUrl
     });
@@ -82,16 +84,36 @@ module.exports = Object.assign({}, StoreMixin, {
   },
 
   redirectToLogin(nextState, replace) {
-    const redirectTo = RouterUtil.getRedirectTo();
-    console.log(redirectTo);
+    // const redirectTo = RouterUtil.getRedirectTo();
+    const authCode = querystring.parse(global.location.search.replace('?','')).code;
+   
     // Ignores relative path if redirect is present
-    if (redirectTo) {
-      replace(`/login?redirect=${redirectTo}`);
-    } else {
-      console.log("before navigate");
-      this.navigateToLoginPage();
+    if(authCode){
+      console.log("change access token", authCode)
+      this.changeAccessToken(authCode);
       // replace(`/login?relativePath=${nextState.location.pathname}`);
+    } else {
+      this.navigateToLoginPage();
     }
+  },
+
+  // Change Access Token by code.
+  changeAccessToken(code){
+    reqwest({
+        url: `http://${config.redirectUrl}/auth?code=${code}`,
+        method: 'GET',
+        crossOrigin: true,
+        type: 'json',
+      })
+      .then(function(res){
+        console.log(res)
+        global.location.search = null;
+        AuthStore.login(res);
+        // window.location = `${config.redirectUrl}`
+      })
+      .catch( err => {
+        console.log("no res")
+      })
   },
 
   AJAXRequestError(xhr) {
@@ -101,7 +123,7 @@ module.exports = Object.assign({}, StoreMixin, {
 
     const location = global.location.hash;
     const onAccessDeniedPage = /access-denied/.test(location);
-    const onLoginPage = /login/.test(location);
+    // const onLoginPage = /login/.test(location);
 
     // Unauthorized
     if (xhr.status === 401 && !onLoginPage && !onAccessDeniedPage) {
@@ -140,11 +162,6 @@ module.exports = Object.assign({}, StoreMixin, {
       {
         component: AccessDeniedPage,
         path: "/access-denied",
-        type: Route
-      },
-      {
-        component: LoginPage,
-        path: "/login",
         type: Route
       }
     );
@@ -208,7 +225,7 @@ module.exports = Object.assign({}, StoreMixin, {
     const isValidRedirect = RouterUtil.isValidRedirect(redirectTo);
 
     if (isValidRedirect) {
-      global.location.href = redirectTo;
+      // global.location.href = redirectTo;
     } else {
       ApplicationUtil.beginTemporaryPolling(() => {
         const relativePath = RouterUtil.getRelativePath();
@@ -230,18 +247,17 @@ module.exports = Object.assign({}, StoreMixin, {
   userLogoutSuccess() {
     // Reload configuration because we need to get "firstUser" which is
     // dynamically set based on number of users
+
     configResponseCallback = this.navigateToLoginPage;
     ConfigStore.fetchConfig();
   },
 
   delayApplicationLoad(value) {
-    const user = AuthStore.getUser();
-
+    const loggin = AuthStore.isLoggedIn();
     // If user is logged in, then let"s let the app do its thing
-    if (user) {
+    if (loggin) {
       return value;
     }
-
     // Let"s wait till login and then we"ll request mesos summary before render
     return false;
   }

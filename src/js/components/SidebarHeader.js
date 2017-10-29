@@ -130,11 +130,6 @@ class SidebarHeader extends mixin(StoreMixin) {
           global.open("http://dc.njuics.cn/docs/", "_blank");
           // global.open(MetadataStore.buildDocsURI("/"), "_blank");
         }
-      },
-      {
-        html: "logout",
-        id: "logout",
-        onClick: this.handleItemSelect
       }
       // {
       //   html: "Install CLI",

@@ -12,9 +12,10 @@ const Utils = {
      console.log('empty user cookie')
     return cookie.serialize(userCookieKey, "", { expires: date });
   },
-  setUserCookie(uid, date) {
-    global.document.cookie = userCookieKey + '=' + JSON.stringify({ is_remote : true, description: 'new user', uid : uid})
+  setUserCookie(user, date) {
+    global.document.cookie = userCookieKey + '=' + JSON.stringify({ is_remote : true, description: 'new user', user : user})
   }
 };
 
 module.exports = Utils;
+
