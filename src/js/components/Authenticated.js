@@ -1,6 +1,5 @@
 import React from "react";
 import PluginSDK from "PluginSDK";
-
 import AuthStore from "../stores/AuthStore";
 /*
  * Exports a higher-order component that checks if user is logged in using the
@@ -11,7 +10,6 @@ module.exports = function(ComposedComponent) {
   return class Authenticated extends React.Component {
     static willTransitionTo(nextState, replace) {
       // console.log("will transition to login ",localStorage.getItem('user'))
-      console.log(AuthStore.isLoggedIn())
       if (!AuthStore.isLoggedIn()) {
         PluginSDK.Hooks.doAction("redirectToLogin", nextState, replace);
       }

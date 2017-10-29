@@ -71,11 +71,11 @@ class AuthStore extends GetSetBaseStore {
   }
 
   login(token) {
-    //register user and save token locally
-    localStorage.setItem('accessToken',token.accessToken)
-    localStorage.setItem('refreshToken',token.refreshToken)
+    // register user and save token locally
+    localStorage.setItem("accessToken", token.accessToken);
+    localStorage.setItem("refreshToken", token.refreshToken);
 
-    CookieUtils.setUserCookie(token.user, new Date())
+    CookieUtils.setUserCookie(token.user, new Date());
     AuthActions.login(...arguments);
   }
 
@@ -88,9 +88,7 @@ class AuthStore extends GetSetBaseStore {
   }
 
   getUser() {
-    const user = CookieUtils.getUserMetadata();
-    // const user = localStorage.getItem('user');
-    return user
+    return CookieUtils.getUserMetadata();
   }
 
   processLoginSuccess() {
@@ -117,4 +115,3 @@ class AuthStore extends GetSetBaseStore {
 }
 
 module.exports = new AuthStore();
-

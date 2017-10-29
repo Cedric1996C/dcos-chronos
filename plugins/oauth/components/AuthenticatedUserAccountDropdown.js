@@ -13,7 +13,6 @@ class AuthenticatedUserAccountDropdown extends UserAccountDropdown {
     const user = AuthStore.getUser();
 
     let userLabel = null;
-    console.log(user)
     if (user && !user.is_remote) {
       userLabel = user.description;
     } else if (user && user.is_remote) {

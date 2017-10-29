@@ -5,8 +5,8 @@ import React from "react";
 import { Redirect, Route, hashHistory } from "react-router";
 import { StoreMixin } from "mesosphere-shared-reactjs";
 import reqwest from "reqwest";
-
-import AuthenticatedUserAccountDropdown from "./components/AuthenticatedUserAccountDropdown";
+import AuthenticatedUserAccountDropdown
+  from "./components/AuthenticatedUserAccountDropdown";
 import config from "./config";
 
 const { Url } = require("url");
@@ -21,8 +21,7 @@ const {
   ConfigStore,
   CookieUtils,
   RouterUtil,
-  UsersPage,
-  MetadataStore
+  UsersPage
 } = SDK.get([
   "AccessDeniedPage",
   "ApplicationUtil",
@@ -31,8 +30,7 @@ const {
   "ConfigStore",
   "CookieUtils",
   "RouterUtil",
-  "UsersPage",
-  "MetadataStore",
+  "UsersPage"
 ]);
 
 let configResponseCallback = null;
@@ -75,7 +73,7 @@ module.exports = Object.assign({}, StoreMixin, {
     var auth = new Url();
     auth.href = config.authUrl;
     auth.query = querystring.stringify({
-      response_type: 'code',
+      response_type: "code",
       client_id: config.clientId,
       redirect_url: config.redirectUrl
     });
@@ -83,37 +81,34 @@ module.exports = Object.assign({}, StoreMixin, {
     global.location.href = `${auth.href}/?${auth.query}`;
   },
 
-  redirectToLogin(nextState, replace) {
+  redirectToLogin() {
     // const redirectTo = RouterUtil.getRedirectTo();
-    const authCode = querystring.parse(global.location.search.replace('?','')).code;
-   
+    const authCode = querystring.parse(global.location.search.replace("?", ""));
     // Ignores relative path if redirect is present
-    if(authCode){
-      console.log("change access token", authCode)
-      this.changeAccessToken(authCode);
-      // replace(`/login?relativePath=${nextState.location.pathname}`);
+    if (authCode.code) {
+      console.log("change access token", authCode.code);
+      this.changeAccessToken(authCode.code);
     } else {
       this.navigateToLoginPage();
     }
   },
 
   // Change Access Token by code.
-  changeAccessToken(code){
+  changeAccessToken(code) {
     reqwest({
-        url: `http://${config.redirectUrl}/auth?code=${code}`,
-        method: 'GET',
-        crossOrigin: true,
-        type: 'json',
-      })
-      .then(function(res){
-        console.log(res)
+      url: `http://${config.redirectUrl}/auth?code=${code}`,
+      method: "GET",
+      crossOrigin: true,
+      type: "json"
+    })
+      .then(function(res) {
         global.location.search = null;
         AuthStore.login(res);
         // window.location = `${config.redirectUrl}`
       })
-      .catch( err => {
-        console.log("no res")
-      })
+      .catch(err => {
+        console.log(err);
+      });
   },
 
   AJAXRequestError(xhr) {
@@ -126,7 +121,7 @@ module.exports = Object.assign({}, StoreMixin, {
     // const onLoginPage = /login/.test(location);
 
     // Unauthorized
-    if (xhr.status === 401 && !onLoginPage && !onAccessDeniedPage) {
+    if (xhr.status === 401 && !onAccessDeniedPage) {
       global.document.cookie = CookieUtils.emptyCookieWithExpiry(
         new Date(1970)
       );
@@ -134,7 +129,7 @@ module.exports = Object.assign({}, StoreMixin, {
     }
 
     // Forbidden
-    if (xhr.status === 403 && !onLoginPage && !onAccessDeniedPage) {
+    if (xhr.status === 403 && !onAccessDeniedPage) {
       global.location.href = "#/access-denied";
     }
   },
@@ -158,13 +153,11 @@ module.exports = Object.assign({}, StoreMixin, {
     });
 
     // Add access denied and login pages
-    routes[0].children.unshift(
-      {
-        component: AccessDeniedPage,
-        path: "/access-denied",
-        type: Route
-      }
-    );
+    routes[0].children.unshift({
+      component: AccessDeniedPage,
+      path: "/access-denied",
+      type: Route
+    });
 
     return routes;
   },
@@ -258,7 +251,7 @@ module.exports = Object.assign({}, StoreMixin, {
     if (loggin) {
       return value;
     }
-    // Let"s wait till login and then we"ll request mesos summary before render
+
     return false;
   }
 });
