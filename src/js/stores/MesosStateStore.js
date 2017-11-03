@@ -86,6 +86,9 @@ class MesosStateStore extends GetSetBaseStore {
         case ActionTypes.REQUEST_MESOS_STATE_ERROR:
           this.processStateError(action.xhr);
           break;
+        case ActionTypes.REQUEST_LOCAL_MESOS_STATE_SUCCESS:
+          this.processLocalStateSuccess(action.data);
+          break;
         case ActionTypes.REQUEST_MESOS_STATE_ONGOING:
           this.processOngoingRequest();
           break;
@@ -321,6 +324,10 @@ class MesosStateStore extends GetSetBaseStore {
     const taskCache = this.indexTasksByID(lastMesosState);
     this.set({ lastMesosState, taskCache });
     this.emit(MESOS_STATE_CHANGE);
+  }
+
+  processLocalStateSuccess(lastLocalMesosState) {
+    
   }
 
   processStateError(xhr) {

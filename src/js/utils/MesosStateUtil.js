@@ -3,7 +3,7 @@ import PodInstanceState
   from "../../../plugins/services/src/js/constants/PodInstanceState";
 import Util from "./Util";
 
-const RESOURCE_KEYS = ["cpus", "disk", "mem"];
+const RESOURCE_KEYS = ["cpus", "disk", "mem", "cpus_usage", "disk_usage", "mem_usage"];
 
 // Based on the regex that marathon uses to validate task IDs,
 // but keeping only the 'instance-' prefix, that refers to pods.
@@ -208,7 +208,7 @@ const MesosStateUtil = {
           return memo;
         },
         {
-          resources: { cpus: 0, mem: 0, gpus: 0, disk: 0 },
+          resources: { cpus: 0, mem: 0, gpus: 0, disk: 0, cpus_usage: 0, mem_usage: 0, disk_usage: 0 },
           lastChanged: 0,
           lastUpdated: 0
         }
