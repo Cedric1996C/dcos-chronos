@@ -7,7 +7,7 @@ var InternalStorageMixin = {
   internalStorage_data: {},
 
   internalStorage_get() {
-    console.log(this.internalStorage_data)
+    // console.log(this.internalStorage_data)
     return this.internalStorage_data;
   },
 

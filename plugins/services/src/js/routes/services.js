@@ -9,6 +9,7 @@ import ServicesPage from "../pages/ServicesPage";
 import ServiceTaskDetailPage from "../pages/task-details/ServiceTaskDetailPage";
 import ServiceVolumeContainer
   from "../containers/volume-detail/ServiceVolumeContainer";
+import TaskConsoleTab from "../pages/task-details/TaskConsoleTab";
 import TaskDetailsTab from "../pages/task-details/TaskDetailsTab";
 import TaskFileBrowser from "../pages/task-details/TaskFileBrowser";
 import TaskFilesTab from "../pages/task-details/TaskFilesTab";
@@ -159,6 +160,20 @@ const serviceRoutes = [
                 isTab: true,
                 path: "logs",
                 title: "Logs",
+                type: Route,
+                children: [
+                  {
+                    path: ":filePath",
+                    type: Route
+                  }
+                ]
+              },
+              {
+                component: TaskConsoleTab,
+                hideHeaderNavigation: true,
+                isTab: true,
+                path: "console",
+                title: "Console",
                 type: Route,
                 children: [
                   {
