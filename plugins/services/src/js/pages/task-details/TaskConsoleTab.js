@@ -5,7 +5,7 @@ import { StoreMixin } from "mesosphere-shared-reactjs";
 import Task from "../../structs/Task";
 
 class TaskConsoleTab extends mixin(StoreMixin) {
-   constructor() {
+  constructor() {
     super(...arguments);
     this.state = {
       isLoading: true
@@ -18,15 +18,12 @@ class TaskConsoleTab extends mixin(StoreMixin) {
 
   componentWillUnmount() {
     super.componentWillUnmount();
-
-    // global.removeEventListener("message", this.onMessageReceived);
   }
-
 
   render() {
     const location = "http://localhost:21888/terminal/eb6b6eab9130";
-    const { params, routes, task } = this.props;
-    console.log(task)
+    const { task } = this.props;
+    console.log(task);
 
     return (
       <div className="iframe-page-container">

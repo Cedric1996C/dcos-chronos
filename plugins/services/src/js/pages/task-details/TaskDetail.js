@@ -46,7 +46,7 @@ const HIDE_BREADCRUMBS = [
   "/services/detail/:id/tasks/:taskID/details",
   "/services/detail/:id/tasks/:taskID/logs",
   "/services/detail/:id/tasks/:taskID/logs/:filePath",
-   "/services/detail/:id/tasks/:taskID/console",
+  "/services/detail/:id/tasks/:taskID/console",
   "/services/detail/:id/tasks/:taskID/console/:filePath",
   "/services/detail/:id/tasks/:taskID/files/view(/:filePath(/:innerPath))"
 ];
