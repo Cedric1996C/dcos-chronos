@@ -12,12 +12,7 @@ import {
   REQUEST_CONSOLE_MESSAGE_SUCCESS
 } from "../constants/ActionTypes";
 
-// import {
-//   NODE_STATE_ERROR,
-//   NODE_STATE_SUCCESS,
-//   TASK_DIRECTORY_CHANGE,
-//   TASK_DIRECTORY_ERROR
-// } from "../constants/EventTypes";
+import { CONSOLE_CONNNECT_SUCCESS } from "../constants/EventTypes";
 
 // import TaskConsoleTab from "../structs/TaskDirectory";
 import ConsoleActions from "../events/ConsoleActions";
@@ -52,7 +47,7 @@ class ConsoleStore extends BaseStore {
   }
 
   connectConsole(task) {
-    console.log("consoleStore: connectConsole")
+    console.log("consoleStore: connectConsole");
     ConsoleActions.consoleConnect(task);
   }
 
@@ -69,7 +64,6 @@ class ConsoleStore extends BaseStore {
     console.log("dispatch console connect");
     this.emit(CONSOLE_CONNNECT_SUCCESS, data);
   }
-
 }
 
 module.exports = new ConsoleStore();

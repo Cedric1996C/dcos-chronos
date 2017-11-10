@@ -10,26 +10,25 @@ import {
 var ws;
 
 function getConsoleURL(task) {
-  var httpsEnabled = window.location.protocol == "https:";
   return `ws://${window.location.host}/terminal/375e9a1b2b58/ws`;
-};
+}
 
 function sendMessage(ws, type, content) {
   var message = JSON.stringify({
-    type: type,
-    content: content
-  })
-  if(ws.readyState != 3) {
-      ws.send(message)
+    type,
+    content
+  });
+  if (ws.readyState !== 3) {
+    ws.send(message);
   }
-};
+}
 
 var ConsoleActions = {
-  consoleConnect: function(task) {
+  consoleConnect(task) {
     ws = new WebSocket(getConsoleURL(task));
 
     ws.onopen = function(event) {
-      sendMessage(ws, 'init', JSON.stringify({ Arguments: "", AuthToken: ""}));
+      sendMessage(ws, "init", JSON.stringify({ Arguments: "", AuthToken: "" }));
       // pingTimer = setInterval(sendPing, 30 * 1000, ws);
       AppDispatcher.dispatch({
         type: REQUEST_CONSOLE_CONNECT,
@@ -40,36 +39,36 @@ var ConsoleActions = {
     ws.onmessage = function(event) {
       // console.log(event)
       var data = JSON.parse(event.data);
-      switch(data.type) {
-        case 'output':
+      switch (data.type) {
+        case "output":
           // decode message and convert to utf-8
           // term.io.writeUTF8(window.atob(data.content));
 
           break;
-        case 'pong':
+        case "pong":
           // pong
           break;
-        case 'set-title':
+        case "set-title":
           // term.setWindowTitle(data.content);
           break;
-        case 'set-preferences':
+        case "set-preferences":
           // var preferences = JSON.parse(data.content);
           // Object.keys(preferences).forEach(function(key) {
           //     console.log("Setting " + key + ": " +  preferences[key]);
           //     term.getPrefs().set(key, preferences[key]);
           // });
           break;
-        case 'set-autoreconnect':
+        case "set-autoreconnect":
           // autoReconnect = JSON.parse(data.content);
           // console.log("Enabling reconnect: " + autoReconnect + " seconds")
           break;
-        case 'error':
+        case "error":
           // term.io.writeUTF8(window.atob(data.content));
           break;
         default:
-          console.log("new websocket", url)
-          // unidentified message
-          // term.io.writeUTF8("Invalid message: " + event.data);
+          console.log("new websocket");
+        // unidentified message
+        // term.io.writeUTF8("Invalid message: " + event.data);
       }
     };
 
@@ -83,7 +82,7 @@ var ConsoleActions = {
       //     setTimeout(openWs, autoReconnect * 1000);
       // }
       console.log("WebSocket close");
-    }
+    };
   }
 };
 
