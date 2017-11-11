@@ -6,10 +6,6 @@ import Task from "../../structs/Task";
 import { hterm, lib } from "../hterm";
 
 class TaskConsoleTab extends mixin(StoreMixin) {
-  constructor() {
-    super(...arguments);
-  }
-
   componentWillMount() {
     super.componentWillMount();
     const { task } = this.props;
@@ -35,8 +31,9 @@ class TaskConsoleTab extends mixin(StoreMixin) {
   initializeConsole(id, term, sendMessage) {
     const ws_url = `ws://${window.location.host}/console/ws?task_id=${id}`;
     const ws = new WebSocket(ws_url);
+    var autoReconnect = -1;
     ws.onopen = function(event) {
-      sendMessage(ws, 2, JSON.stringify({ Arguments: "", AuthToken: ""}));
+      sendMessage(ws, 2, JSON.stringify({ Arguments: "", AuthToken: "" }));
       // pingTimer = setInterval(sendPing, 30 * 1000, ws);
       hterm.defaultStorage = new lib.Storage.Local();
       hterm.defaultStorage.clear();
@@ -46,24 +43,24 @@ class TaskConsoleTab extends mixin(StoreMixin) {
       term.onTerminalReady = function() {
         var io = term.io.push();
         io.onVTKeystroke = function(str) {
-            console.log(str)
-            sendMessage(ws, 4, str);
+          sendMessage(ws, 4, str);
         };
         io.sendString = io.onVTKeystroke;
 
         // when user resize browser, send columns and rows to server.
         io.onTerminalResize = function(columns, rows) {
-            sendMessage(ws, 3, JSON.stringify({columns: columns, rows: rows}))
+          sendMessage(ws, 3, JSON.stringify({ columns, rows }));
         };
         term.installKeyboard();
       };
       term.decorate(document.getElementById("terminal"));
+
       return term;
     };
 
     ws.onmessage = function(event) {
       var data = JSON.parse(event.data);
-      switch(data.type) {
+      switch (data.type) {
         case 5:
           // decode message and convert to utf-8
           console.log(data.content);
@@ -72,19 +69,19 @@ class TaskConsoleTab extends mixin(StoreMixin) {
         case 1:
           // pong
           break;
-        case 'set-title':
+        case "set-title":
           term.setWindowTitle(data.content);
           break;
-        case 'set-preferences':
+        case "set-preferences":
           var preferences = JSON.parse(data.content);
           Object.keys(preferences).forEach(function(key) {
-              console.log("Setting " + key + ": " +  preferences[key]);
-              term.getPrefs().set(key, preferences[key]);
+            console.log("Setting " + key + ": " + preferences[key]);
+            term.getPrefs().set(key, preferences[key]);
           });
           break;
-        case 'set-autoreconnect':
+        case "set-autoreconnect":
           autoReconnect = JSON.parse(data.content);
-          console.log("Enabling reconnect: " + autoReconnect + " seconds")
+          console.log("Enabling reconnect: " + autoReconnect + " seconds");
           break;
         case 6:
           term.io.writeUTF8(window.atob(data.content));
@@ -97,22 +94,15 @@ class TaskConsoleTab extends mixin(StoreMixin) {
 
     ws.onclose = function(event) {
       if (term) {
-          term.uninstallKeyboard();
-          term.io.showOverlay("Connection Closed", null);
-      }
-      clearInterval(pingTimer);
-      if (autoReconnect > 0) {
-          setTimeout(openWs, autoReconnect * 1000);
+        term.uninstallKeyboard();
+        term.io.showOverlay("Connection Closed", null);
       }
     };
   }
 
   render() {
-    return (
-        <div id="terminal" className="console-page-container"></div>
-    );
+    return <div id="terminal" className="console-page-container" />;
   }
-
 }
 
 TaskConsoleTab.contextTypes = {
