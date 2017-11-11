@@ -125,22 +125,21 @@ class TaskConsoleTab extends mixin(StoreMixin) {
   handleInput(e) {
     // console.log(e.key);
     // if (e.key === "Enter") {
-      var input_text = e.key;
-      // var input_array = input_text.split(" ");
-      // var input = input_array[0];
-      // var arg = input_array[1];
-      // var command = this.state.commands[input];
+    var input_text = e.key;
+    // var input_array = input_text.split(" ");
+    // var input = input_array[0];
+    // var arg = input_array[1];
+    // var command = this.state.commands[input];
 
-      // this.addHistory(this.state.prompt + " " + input_text);
+    // this.addHistory(this.state.prompt + " " + input_text);
 
-      // if (command === undefined) {
-      //   this.addHistory("sh: command not found: " + input);
-      // } else {
-      //   command(arg);
-      // }
-      ConsoleActions.consoleMessage(input_text);
-      // this.clearInput();
-    
+    // if (command === undefined) {
+    //   this.addHistory("sh: command not found: " + input);
+    // } else {
+    //   command(arg);
+    // }
+    ConsoleActions.consoleMessage(input_text);
+    // this.clearInput();
   }
 
   clearInput() {
@@ -159,7 +158,6 @@ class TaskConsoleTab extends mixin(StoreMixin) {
   }
 
   render() {
-
     var output = this.state.history.map(function(op, i) {
       return <p key={i}>{op}</p>;
     });

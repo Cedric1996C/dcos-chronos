@@ -42,14 +42,14 @@ var ConsoleActions = {
         case 5:
           // decode message and convert to utf-8
           // term.io.writeUTF8(window.atob(data.content));
-          console.log(data)
-          console.log("output", window.atob(data.content))
+          console.log(data);
+          console.log("output", window.atob(data.content));
 
           break;
         case 1:
           // pong
-          console.log(data)
-          console.log("pong", window.atob(data.content))
+          console.log(data);
+          console.log("pong", window.atob(data.content));
           break;
         case "set-title":
           // term.setWindowTitle(data.content);
