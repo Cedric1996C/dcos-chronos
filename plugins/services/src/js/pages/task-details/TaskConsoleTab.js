@@ -4,6 +4,7 @@ import mixin from "reactjs-mixin";
 import { StoreMixin } from "mesosphere-shared-reactjs";
 import Task from "../../structs/Task";
 import ConsoleStore from "../../stores/ConsoleStore";
+import ConsoleActions from "../../events/ConsoleActions";
 
 const METHODS_TO_BIND = [
   "listFiles",
@@ -34,6 +35,7 @@ class TaskConsoleTab extends mixin(StoreMixin) {
     super.componentWillMount();
 
     const { task } = this.props;
+    console.log(task);
     ConsoleStore.connectConsole(task);
   }
 
@@ -121,23 +123,24 @@ class TaskConsoleTab extends mixin(StoreMixin) {
   // }
 
   handleInput(e) {
-    if (e.key === "Enter") {
-      var input_text = this.refs.term.value;
-      var input_array = input_text.split(" ");
-      var input = input_array[0];
-      var arg = input_array[1];
-      var command = this.state.commands[input];
+    // console.log(e.key);
+    // if (e.key === "Enter") {
+      var input_text = e.key;
+      // var input_array = input_text.split(" ");
+      // var input = input_array[0];
+      // var arg = input_array[1];
+      // var command = this.state.commands[input];
 
-      this.addHistory(this.state.prompt + " " + input_text);
+      // this.addHistory(this.state.prompt + " " + input_text);
 
-      if (command === undefined) {
-        this.addHistory("sh: command not found: " + input);
-      } else {
-        command(arg);
-      }
-      console.log(this);
-      this.clearInput();
-    }
+      // if (command === undefined) {
+      //   this.addHistory("sh: command not found: " + input);
+      // } else {
+      //   command(arg);
+      // }
+      ConsoleActions.consoleMessage(input_text);
+      // this.clearInput();
+    
   }
 
   clearInput() {
@@ -156,9 +159,7 @@ class TaskConsoleTab extends mixin(StoreMixin) {
   }
 
   render() {
-    // const location = "http://localhost:21888/terminal/eb6b6eab9130";
-    // const { task } = this.props;
-    // console.log(task);
+
     var output = this.state.history.map(function(op, i) {
       return <p key={i}>{op}</p>;
     });
@@ -168,7 +169,7 @@ class TaskConsoleTab extends mixin(StoreMixin) {
         {output}
         <p>
           <span className="prompt">{this.state.prompt}</span>
-          <input type="text" onKeyPress={this.handleInput.bind(this)} ref="term"/>
+          <input type="text" onKeyDown={this.handleInput.bind(this)} ref="term"/>
         </p>
       </div>
     );

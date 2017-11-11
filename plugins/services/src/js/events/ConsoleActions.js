@@ -10,7 +10,7 @@ import {
 var ws;
 
 function getConsoleURL(task) {
-  return `ws://${window.location.host}/terminal/375e9a1b2b58/ws`;
+  return `ws://${window.location.host}/console/ws?task_id=${task.id}`;
 }
 
 function sendMessage(ws, type, content) {
@@ -37,16 +37,19 @@ var ConsoleActions = {
     };
 
     ws.onmessage = function(event) {
-      // console.log(event)
       var data = JSON.parse(event.data);
       switch (data.type) {
-        case "output":
+        case 5:
           // decode message and convert to utf-8
           // term.io.writeUTF8(window.atob(data.content));
+          console.log(data)
+          console.log("output", window.atob(data.content))
 
           break;
-        case "pong":
+        case 1:
           // pong
+          console.log(data)
+          console.log("pong", window.atob(data.content))
           break;
         case "set-title":
           // term.setWindowTitle(data.content);
@@ -83,6 +86,11 @@ var ConsoleActions = {
       // }
       console.log("WebSocket close");
     };
+  },
+
+  consoleMessage(data) {
+    console.log(data);
+    sendMessage(ws, 4, data);
   }
 };
 

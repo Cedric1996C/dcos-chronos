@@ -47,7 +47,7 @@ class ConsoleStore extends BaseStore {
   }
 
   connectConsole(task) {
-    console.log("consoleStore: connectConsole");
+    console.log("consoleStore: ", task.id);
     ConsoleActions.consoleConnect(task);
   }
 
