@@ -4,6 +4,7 @@ import mixin from "reactjs-mixin";
 import { StoreMixin } from "mesosphere-shared-reactjs";
 import Task from "../../structs/Task";
 import { hterm, lib } from "../hterm";
+import { CONSOLE_SERVER } from "../../../config"; 
 
 class TaskConsoleTab extends mixin(StoreMixin) {
   componentWillMount() {
@@ -29,7 +30,7 @@ class TaskConsoleTab extends mixin(StoreMixin) {
   }
 
   initializeConsole(id, term, sendMessage) {
-    const ws_url = `ws://${window.location.host}/console/ws?task_id=${id}`;
+    const ws_url = `ws://${CONSOLE_SERVER}/console/ws?task_id=${id}`;
     const ws = new WebSocket(ws_url);
     var autoReconnect = -1;
     ws.onopen = function(event) {
@@ -63,7 +64,6 @@ class TaskConsoleTab extends mixin(StoreMixin) {
       switch (data.type) {
         case 5:
           // decode message and convert to utf-8
-          console.log(data.content);
           term.io.writeUTF8(window.atob(data.content));
           break;
         case 1:
