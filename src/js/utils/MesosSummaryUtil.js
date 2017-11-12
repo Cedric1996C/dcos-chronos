@@ -15,14 +15,14 @@ const MesosSummaryUtil = {
 
         return memo;
       },
-      { cpus: 0, mem: 0, disk: 0 }
+      { cpus: 0, mem: 0, disk: 0, cpus_usage: 0, mem_usage: 0, disk_usage: 0 }
     );
   },
 
   stateResourcesToResourceStates(stateResources) {
     // Transpose from [{date, resources, totalResources}, ...]
     // to {resource: [{date, value, percentage}, ...], resource: ...}
-    const resources = { cpus: [], mem: [], disk: [] };
+    const resources = { cpus: [], mem: [], disk: [], cpus_usage: [], mem_usage: [], disk_usage: [] };
     const resourceTypes = Object.keys(resources);
 
     stateResources.forEach(function(stateResource) {
@@ -72,8 +72,8 @@ const MesosSummaryUtil = {
     return {
       frameworks: [],
       slaves: [],
-      used_resources: { cpus: 0, mem: 0, disk: 0 },
-      total_resources: { cpus: 0, mem: 0, disk: 0 }
+      used_resources: { cpus: 0, mem: 0, disk: 0, cpus_usage: 0, mem_usage: 0, disk_usage: 0 },
+      total_resources: { cpus: 0, mem: 0, disk: 0, cpus_usage: 0, mem_usage: 0, disk_usage: 0 }
     };
   },
 

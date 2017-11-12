@@ -1,5 +1,4 @@
 import React from "react";
-
 import Chart from "./Chart";
 import TimeSeriesChart from "./TimeSeriesChart";
 import TimeSeriesLabel from "./TimeSeriesLabel";

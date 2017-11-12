@@ -227,6 +227,57 @@ var DashboardPage = React.createClass({
           </div>
           <div className={columnClasses}>
             <Panel
+              className="dashboard-panel dashboard-panel-chart dashboard-panel-chart-timeseries panel"
+              heading={this.getHeading(
+                "DASHBOARD.PANEL_HEADING.CPU_USAGE"
+              )}
+            >
+            <ResourceTimeSeriesChart
+                colorIndex={0}
+                usedResourcesStates={data.usedResourcesStates}
+                usedResources={data.usedResources}
+                totalResources={data.totalResources}
+                mode="cpus_usage"
+                refreshRate={Config.getRefreshRate()}
+              />        
+            </Panel>
+          </div>
+          <div className={columnClasses}>
+            <Panel
+              className="dashboard-panel dashboard-panel-chart dashboard-panel-chart-timeseries panel"
+              heading={this.getHeading(
+                "DASHBOARD.PANEL_HEADING.MEMORY_USAGE"
+              )}
+            >
+            <ResourceTimeSeriesChart
+                colorIndex={6}
+                usedResourcesStates={data.usedResourcesStates}
+                usedResources={data.usedResources}
+                totalResources={data.totalResources}
+                mode="mem_usage"
+                refreshRate={Config.getRefreshRate()}
+              />        
+            </Panel>
+          </div>
+          <div className={columnClasses}>
+            <Panel
+              className="dashboard-panel dashboard-panel-chart dashboard-panel-chart-timeseries panel"
+              heading={this.getHeading(
+                "DASHBOARD.PANEL_HEADING.DISK_USAGE"
+              )}
+            >
+            <ResourceTimeSeriesChart
+                colorIndex={3}
+                usedResourcesStates={data.usedResourcesStates}
+                usedResources={data.usedResources}
+                totalResources={data.totalResources}
+                mode="disk_usage"
+                refreshRate={Config.getRefreshRate()}
+              />        
+            </Panel>
+          </div>
+          <div className={columnClasses}>
+            <Panel
               className="dashboard-panel dashboard-panel-list dashboard-panel-list-service-health allow-overflow panel"
               heading={this.getHeading(
                 "DASHBOARD.PANEL_HEADING.SERVICES_HEALTH"
@@ -248,21 +299,6 @@ var DashboardPage = React.createClass({
               <TasksChart tasks={data.tasks} />
             </Panel>
           </div>
-          {/*<div className={columnClasses}>
-            <Panel
-              className="dashboard-panel dashboard-panel-list dashboard-panel-list-component-health panel"
-              heading={this.getHeading(
-                "DASHBOARD.PANEL_HEADING.COMPONENT_HEALTH"
-              )}
-              footer={this.getViewAllComponentsButton()}
-              footerClass="text-align-center"
-            >
-              <ComponentList
-                displayCount={this.props.componentsListLength}
-                units={this.getUnits()}
-              />
-            </Panel>
-          </div>*/}
           <div className={columnClasses}>
             <Panel
               className="dashboard-panel dashboard-panel-chart dashboard-panel-chart-timeseries panel"

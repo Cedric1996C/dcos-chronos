@@ -7,8 +7,14 @@ import postcss from "postcss";
 import purifycss from "purify-css";
 import React from "react";
 import ReactDOMServer from "react-dom/server";
-import StringReplacePlugin from "string-replace-webpack-plugin";
+// import StringReplacePlugin from "string-replace-webpack-plugin";
 
+import ExtractTextPlugin from "extract-text-webpack-plugin";
+import HtmlWebpackPlugin from "html-webpack-plugin";
+import StringReplacePlugin from "string-replace-webpack-plugin";
+import WebpackNotifierPlugin from "webpack-notifier";
+import webpack from "webpack";
+import SVGCompilerPlugin from "./plugins/svg-compiler-plugin";
 import IconDCOSLogoMark from "../src/js/components/icons/IconDCOSLogoMark.js";
 
 function absPath() {
@@ -53,6 +59,9 @@ new Promise(function(resolve, reject) {
 function requireFromString(src, filename) {
   const Module = module.constructor;
   const sourceModule = new Module();
+  if (filename === undefined || filename === null) {
+    filename = ".";
+  }
   sourceModule._compile(src, filename);
 
   return sourceModule.exports;
@@ -66,13 +75,8 @@ const bootstrap = {
 };
 
 module.exports = {
-  lessLoader: {
-    lessPlugins: [colorLighten]
-  },
-
   module: {
-    preLoaders: [
-      // Replace HTML comments
+    loaders: [
       {
         test: /\.html$/,
         exclude: /node_modules/,
@@ -90,18 +94,18 @@ module.exports = {
               }
             }
           ]
-        })
+        }),
+        enforce: "pre"
       },
       {
         test: /\.js$/,
         loader: "source-map-loader",
-        exclude: /node_modules/
-      }
-    ],
-    loaders: [
+        exclude: /node_modules/,
+        enforce: "pre"
+      },
       {
         test: /\.html$/,
-        loader: "html?attrs=link:href"
+        loader: "html-loader?attrs=link:href"
       },
       {
         test: /\.json$/,
@@ -117,14 +121,12 @@ module.exports = {
       },
       {
         test: /\.(ico|icns)$/,
-        loader: "file?name=./[hash]-[name].[ext]"
+        loader: "file-loader?name=./[hash]-[name].[ext]"
       },
       {
         test: /\.(ttf|woff)$/,
-        loader: "file?name=./fonts/source-sans-pro/[name].[ext]"
-      }
-    ],
-    postLoaders: [
+        loader: "file-loader?name=./fonts/source-sans-pro/[name].[ext]"
+      },
       {
         test: /\.html$/,
         exclude: /node_modules/,
@@ -154,16 +156,40 @@ module.exports = {
               }
             }
           ]
-        })
+        }),
+        enforce: "post"
       }
     ]
   },
-
   node: {
     fs: "empty"
   },
+  plugins: [
+    new StringReplacePlugin(),
 
-  postcss: [autoprefixer],
+    new HtmlWebpackPlugin({
+      template: "./src/index.html"
+    }),
+
+    new ExtractTextPlugin("./[name].css"),
+
+    new WebpackNotifierPlugin({ alwaysNotify: true }),
+
+    new webpack.optimize.CommonsChunkPlugin({
+      name: "vendor",
+      filename: "vendor.js"
+    }),
+
+    new SVGCompilerPlugin({ baseDir: "src/img/components/icons" }),
+
+    new webpack.LoaderOptionsPlugin({
+      options: {
+        htmlLoader: {
+          whateverProp: true
+        }
+      }
+    })
+  ],
 
   resolve: {
     alias: {
@@ -171,14 +197,24 @@ module.exports = {
       PluginTestUtils: absPath("src/js/plugin-bridge/PluginTestUtils"),
       "#EXTERNAL_PLUGINS": externalPluginsDir,
       "#PLUGINS": absPath("plugins"),
-      "#SRC": absPath("src")
+      "#SRC": absPath("src"),
+      later: "later/later.js",
+      "fbjs/lib/memoizeStringOnly": "../node_modules/fbjs/lib/memoizeStringOnly"
     },
-    extensions: ["", ".js", ".less", ".css"],
-    root: [absPath(), absPath("node_modules"), absPath("packages")],
-    modulesDirectories: ["node_modules", "packages"]
+    extensions: [".", ".js", ".less", ".css"],
+    // root: [absPath(), absPath("node_modules"), absPath("packages")],
+    modules: [
+      absPath("node_modules"),
+      absPath("packages"),
+      path.join(__dirname, "node_modules")
+    ]
   },
 
   resolveLoader: {
-    root: [absPath("node_modules"), absPath("packages")]
+    modules: [
+      absPath("node_modules"),
+      absPath("packages"),
+      path.join(__dirname, "node_modules")
+    ]
   }
 };

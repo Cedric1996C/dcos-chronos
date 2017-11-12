@@ -1,10 +1,11 @@
-import ExtractTextPlugin from "extract-text-webpack-plugin";
-import HtmlWebpackPlugin from "html-webpack-plugin";
+// import ExtractTextPlugin from "extract-text-webpack-plugin";
+// import HtmlWebpackPlugin from "html-webpack-plugin";
 import StringReplacePlugin from "string-replace-webpack-plugin";
-import WebpackNotifierPlugin from "webpack-notifier";
-import webpack from "webpack";
-import SVGCompilerPlugin from "./plugins/svg-compiler-plugin";
+// import WebpackNotifierPlugin from "webpack-notifier";
+// import webpack from "webpack";
+// import SVGCompilerPlugin from "./plugins/svg-compiler-plugin";
 
+import path from "path";
 import packageInfo from "../package";
 import webpackConfig from "./webpack.config.babel";
 
@@ -12,7 +13,7 @@ import webpackConfig from "./webpack.config.babel";
 // Can override with npm config set port 80
 const PORT = parseInt(process.env.npm_package_config_port, 10);
 const environment = process.env.NODE_ENV;
-let devtool = null;
+let devtool = false;
 const devServer = {
   proxy: require("./proxy.dev.js"),
   stats: {
@@ -35,7 +36,7 @@ let dependencies = Object.assign({}, packageInfo.dependencies);
 delete dependencies["canvas-ui"];
 delete dependencies["cnvs"];
 dependencies = Object.keys(dependencies).map(function(dependency) {
-  return "node_modules/" + dependency;
+  return "./node_modules/" + dependency;
 });
 
 const entry = {
@@ -62,75 +63,60 @@ if (environment === "development") {
   };
 }
 
-let reactHotLoader = "react-hot!";
+// let reactHotLoader = "react-hot-loader!";
 
-if (process.env.REACTJS_COMPONENTS_LOCAL) {
-  reactHotLoader = "";
-}
+// if (process.env.REACTJS_COMPONENTS_LOCAL) {
+//   reactHotLoader = "";
+// }
 
 module.exports = Object.assign({}, webpackConfig, {
   entry,
   devtool,
   output: {
-    path: "./build",
+    path: path.join(__dirname, "build"),
     filename: "[name].js"
   },
   devServer,
-  plugins: [
-    new StringReplacePlugin(),
-
-    new HtmlWebpackPlugin({
-      template: "./src/index.html"
-    }),
-
-    new ExtractTextPlugin("./[name].css"),
-
-    new WebpackNotifierPlugin({ alwaysNotify: true }),
-
-    new webpack.optimize.CommonsChunkPlugin("vendor", "vendor.js", Infinity),
-
-    new SVGCompilerPlugin({ baseDir: "src/img/components/icons" })
-  ],
   module: {
-    preLoaders: webpackConfig.module.preLoaders,
-    loaders: webpackConfig.module.loaders.concat([
+    rules: webpackConfig.module.loaders.concat([
       {
         test: /\.js$/,
         // Exclude all node_modules except dcos-dygraphs
         exclude: /(?=\/node_modules\/)(?!\/node_modules\/dcos-dygraphs\/)/,
-        loader: reactHotLoader +
-          "babel?" +
-          JSON.stringify({
-            cacheDirectory: "/tmp",
-            // Map through resolve to fix preset loading problem
-            presets: ["babel-preset-es2015", "babel-preset-react"].map(
-              require.resolve
-            )
-          })
+        loaders: ["react-hot-loader", "babel-loader"]
+        // use: reactHotLoader+
+        //   "babel?" +
+        //   JSON.stringify({
+        //     cacheDirectory: "/tmp",
+        //     // Map through resolve to fix preset loading problem
+        //     presets: ["babel-preset-es2015", "babel-preset-react"].map(
+        //       require.resolve
+        //     )
+        //   })
       },
       {
         test: /\.css$/,
-        loader: "style!css!postcss"
+        loader: "style-loader!css-loader!postcss-loader"
       },
       {
         test: /\.less$/,
-        loader: "style?sourceMap!css?sourceMap!postcss?sourceMap!less?sourceMap"
+        loader: "style-loader!css-loader!postcss-loader!less-loader"
       },
       {
         test: /\.png$/,
-        loader: "file?name=./[hash]-[name].[ext]&limit=100000&mimetype=image/png"
+        loader: "file-loader?name=./[hash]-[name].[ext]&limit=100000&mimetype=image/png"
       },
       {
         test: /\.svg$/,
-        loader: "file?name=./[hash]-[name].[ext]&limit=100000&mimetype=image/svg+xml"
+        loader: "file-loader?name=./[hash]-[name].[ext]&limit=100000&mimetype=image/svg+xml"
       },
       {
         test: /\.gif$/,
-        loader: "file?name=./[hash]-[name].[ext]&limit=100000&mimetype=image/gif"
+        loader: "file-loader?name=./[hash]-[name].[ext]&limit=100000&mimetype=image/gif"
       },
       {
         test: /\.jpg$/,
-        loader: "file?name=./[hash]-[name].[ext]"
+        loader: "file-loader?name=./[hash]-[name].[ext]"
       },
       // Replace @@variables
       {
@@ -147,7 +133,6 @@ module.exports = Object.assign({}, webpackConfig, {
           ]
         })
       }
-    ]),
-    postLoaders: webpackConfig.module.postLoaders
+    ])
   }
 });

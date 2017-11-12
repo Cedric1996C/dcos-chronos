@@ -71,12 +71,11 @@ class AuthStore extends GetSetBaseStore {
   }
 
   login(token) {
-    //register user uid
-    // console.log(token)
-    var t = token.token
-    // console.log( t, t.uid)
-    CookieUtils.setUserCookie(t.uid, new Date())
+    // register user and save token locally
+    localStorage.setItem("accessToken", token.accessToken);
+    localStorage.setItem("refreshToken", token.refreshToken);
 
+    CookieUtils.setUserCookie(token.user, new Date());
     AuthActions.login(...arguments);
   }
 
@@ -89,24 +88,10 @@ class AuthStore extends GetSetBaseStore {
   }
 
   getUser() {
-    const userCode = CookieUtils.getUserMetadata();
-
-    // console.log('useercode', userCode)
-    if (userCode == null) {
-      return null;
-    }
-
-    try {
-      // return JSON.parse(atob(userCode));
-      return userCode
-    } catch (err) {
-      return null;
-    }
+    return CookieUtils.getUserMetadata();
   }
 
   processLoginSuccess() {
-    //initiate cookie manually
-    // console.log('set usercode')
     // global.document.cookie = CookieUtils.setUserCookie(new Date())
     // console.log(global.document.cookie)
     Hooks.doAction("userLoginSuccess");
@@ -115,6 +100,9 @@ class AuthStore extends GetSetBaseStore {
 
   processLogoutSuccess() {
     global.document.cookie = CookieUtils.emptyCookieWithExpiry(new Date(1970));
+    // localStorage.setItem("user", null);
+    localStorage.setItem("accessToken", null);
+    localStorage.setItem("refreshToken", null);
 
     this.emit(AUTH_USER_LOGOUT_SUCCESS);
 
