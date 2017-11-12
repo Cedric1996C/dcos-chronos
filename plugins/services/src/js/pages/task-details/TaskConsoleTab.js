@@ -4,7 +4,7 @@ import mixin from "reactjs-mixin";
 import { StoreMixin } from "mesosphere-shared-reactjs";
 import Task from "../../structs/Task";
 import { hterm, lib } from "../hterm";
-import { CONSOLE_SERVER } from "../../../config"; 
+import { CONSOLE_SERVER } from "../../../config";
 
 class TaskConsoleTab extends mixin(StoreMixin) {
   componentWillMount() {
