@@ -99,7 +99,7 @@ class TaskConsole extends mixin(StoreMixin) {
   }
 
   render() {
-    return <div id="terminal" />
+    return <div id="terminal" />;
   }
 }
 

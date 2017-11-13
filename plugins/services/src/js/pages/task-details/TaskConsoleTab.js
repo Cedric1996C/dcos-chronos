@@ -18,14 +18,17 @@ class TaskConsoleTab extends mixin(StoreMixin) {
   }
 
   getTaskConsole(task) {
-    return <TaskConsole task={task} />
+    return <TaskConsole task={task} />;
   }
 
   render() {
     const { task } = this.props;
-    return <div className="console-page-container">
-    {this.getTaskConsole(task)}
-    </div>;
+
+    return (
+      <div className="console-page-container">
+        {this.getTaskConsole(task)}
+      </div>
+    );
   }
 }
 
