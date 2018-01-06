@@ -52,4 +52,7 @@ curl -s --user mesos:MESOS96ba0602@nju.edu.cn n167:4400/v1/scheduler/jobs | jq
 
 # Mesos Restful API
 
++ 任务列表 http://n167:5050/tasks
++ 框架列表 http://n167:5050/frameworks
+
 http://mesos.apache.org/documentation/latest/endpoints/ 
