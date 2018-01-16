@@ -22,6 +22,8 @@ import ServiceFilterTypes
 
 import JobAddBtn from "../../components/jobs/JodAddBtn";
 import JobStateFilter from "../../components/jobs/JobStateFilter";
+// import ChronosJobModal from "../../components/jobs/ChronosJobModal";
+import ChronosJobModal from "../../components/modals/ChronosJobModal";
 
 const METHODS_TO_BIND = [
   "getHeadline",
@@ -184,7 +186,7 @@ class JobsTab extends mixin(StoreMixin) {
         <div className="flex-grow">
           {this.getHeadline(item, filteredJobs)}
           <FilterBar>
-            <JobAddBtn />
+            <JobAddBtn onClick={this.handleOpenChronosJobModal} />
             <JobStateFilter />
             <JobSearchFilter
               onChange={this.handleFilterChange}
@@ -255,10 +257,16 @@ class JobsTab extends mixin(StoreMixin) {
     const item = DCOSStore.jobTree.findItemById(id) || DCOSStore.jobTree;
 
     const modal = (
-      <JobFormModal
-        open={this.state.isJobFormModalOpen}
-        onClose={this.handleCloseJobFormModal}
-      />
+      <div>
+        <JobFormModal
+          open={this.state.isJobFormModalOpen}
+          onClose={this.handleCloseJobFormModal}
+        />
+        <ChronosJobModal
+          open={this.state.isChronosJobModalOpen}
+          onClose={this.handleCloseChronosJobModal}
+        />
+      </div>
     );
 
     return this.getContents(item, modal);

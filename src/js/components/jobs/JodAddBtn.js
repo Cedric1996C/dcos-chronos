@@ -4,14 +4,23 @@ import React, { Component } from "react";
 // import FilterInputText from "./FilterInputText";
 
 class JobAddBtn extends Component {
+  constructor(props) {
+    super(...props);
+  }
+
   render() {
-    return <button className="button button-success">New Job</button>;
+    const { onClick } = this.props;
+
+    return (
+      <button className="button button-success" onClick={onClick}>
+        New Job
+      </button>
+    );
   }
 }
 
-// JobSearchFilter.propTypes = {
-//     onChange: React.PropTypes.func.isRequired,
-//     value: React.PropTypes.string
-// };
+JobAddBtn.propTypes = {
+  onClick: React.PropTypes.func.isRequired
+};
 
 module.exports = JobAddBtn;
