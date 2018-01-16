@@ -5,9 +5,7 @@ import React, { Component } from "react";
 
 class JobAddBtn extends Component {
   render() {
-    return (
-      <button className="button button-success">New Job</button>
-    );
+    return <button className="button button-success">New Job</button>;
   }
 }
 

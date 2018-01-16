@@ -20,13 +20,18 @@ import Page from "../../components/Page";
 import ServiceFilterTypes
   from "../../../../plugins/services/src/js/constants/ServiceFilterTypes";
 
+import JobAddBtn from "../../components/jobs/JodAddBtn";
+import JobStateFilter from "../../components/jobs/JobStateFilter";
+
 const METHODS_TO_BIND = [
   "getHeadline",
   "handleFilterChange",
   "handleCloseJobFormModal",
   "handleOpenJobFormModal",
   "resetFilter",
-  "resetFilterQueryParams"
+  "resetFilterQueryParams",
+  "handleCloseChronosJobModal",
+  "handleOpenChronosJobModal"
 ];
 
 var DEFAULT_FILTER_OPTIONS = {
@@ -39,7 +44,8 @@ class JobsTab extends mixin(StoreMixin) {
 
     this.state = Object.assign(
       {
-        isJobFormModalOpen: false
+        isJobFormModalOpen: false,
+        isChronosJobModalOpen: false
       },
       DEFAULT_FILTER_OPTIONS
     );
@@ -74,6 +80,15 @@ class JobsTab extends mixin(StoreMixin) {
 
   handleOpenJobFormModal() {
     this.setState({ isJobFormModalOpen: true });
+  }
+
+  // Chronos Job Adding
+  handleCloseChronosJobModal() {
+    this.setState({ isChronosJobModalOpen: false });
+  }
+
+  handleOpenChronosJobModal() {
+    this.setState({ isChronosJobModalOpen: true });
   }
 
   handleFilterChange(filterValue) {
@@ -169,6 +184,8 @@ class JobsTab extends mixin(StoreMixin) {
         <div className="flex-grow">
           {this.getHeadline(item, filteredJobs)}
           <FilterBar>
+            <JobAddBtn />
+            <JobStateFilter />
             <JobSearchFilter
               onChange={this.handleFilterChange}
               value={this.state.searchString}
