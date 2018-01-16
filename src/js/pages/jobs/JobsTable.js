@@ -146,7 +146,7 @@ class JobsTable extends React.Component {
       const schedule = schedules[0];
 
       if (schedule.enabled) {
-        const cron = schedule.cron
+        const cron = schedule.cron;
 
         scheduleIcon = (
           <Tooltip
@@ -162,8 +162,7 @@ class JobsTable extends React.Component {
     }
 
     return (
-      <div className="job-table-heading flex-box
-        flex-box-align-vertical-center table-cell-flex-box">
+      <div className="job-table-heading flex-box flex-box-align-vertical-center table-cell-flex-box">
         <Link to={`/jobs/${id}`} className="table-cell-icon">
           {itemImage}
         </Link>
