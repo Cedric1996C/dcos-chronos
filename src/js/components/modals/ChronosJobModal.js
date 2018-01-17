@@ -2,6 +2,7 @@ import { Modal } from "reactjs-components";
 import React, { Component } from "react";
 
 import ModalHeading from "../modals/ModalHeading";
+import ChronosJobForm from "../jobs/ChronosJobForm";
 
 class ChronosJobModal extends Component {
   constructor(props) {
@@ -20,7 +21,9 @@ class ChronosJobModal extends Component {
     );
   }
 
-  getModalContents() {}
+  getModalContents() {
+    return <ChronosJobForm />;
+  }
 
   getModalFooter() {
     let submitLabel = "Create Job";
