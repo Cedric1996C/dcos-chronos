@@ -22,7 +22,7 @@ class ChronosJobModal extends Component {
   }
 
   getModalContents() {
-    return <ChronosJobForm />;
+    return <ChronosJobForm className="form-panel" />;
   }
 
   getModalFooter() {
@@ -51,7 +51,7 @@ class ChronosJobModal extends Component {
         backdropClass="modal-backdrop default-cursor"
         modalWrapperClass="multiple-form-modal modal-form"
         open={open}
-        scrollContainerClass="multiple-form-modal-body"
+        scrollContainerClass="form-panel"
         header={this.getModalHeader()}
         footer={this.getModalFooter()}
         showHeader={true}

@@ -18,3 +18,9 @@ Chronos，FTP和Samba的 **用户名** 均为 `mesos` ，**密码** 均为 `MESO
 JSON配置文件中，"image": "registry.njuics.cn/ying/dlkit:latest"
 
 GPU集群使用说明请见 https://github.com/icsnju/dlkit/blob/master/docs/README.md 
+
+校外 proxy :
+http://114.212.189.147:10114/mesos                      mesos API
+http://114.212.189.147:10127/                           chronos API
+http://114.212.189.147:10114/tasks                      tasks API
+http://114.212.189.147:10127/v1/scheduler/jobs          jobs API  
