@@ -1,43 +1,43 @@
 import { RequestUtil } from "mesosphere-shared-reactjs";
 
 import {
-  REQUEST_METRONOME_JOB_DELETE_ERROR,
-  REQUEST_METRONOME_JOB_DELETE_SUCCESS,
-  REQUEST_METRONOME_JOB_UPDATE_ERROR,
-  REQUEST_METRONOME_JOB_UPDATE_SUCCESS,
-  REQUEST_METRONOME_JOB_RUN_ERROR,
-  REQUEST_METRONOME_JOB_RUN_SUCCESS,
-  REQUEST_METRONOME_JOB_SCHEDULE_UPDATE_ERROR,
-  REQUEST_METRONOME_JOB_SCHEDULE_UPDATE_SUCCESS,
-  REQUEST_METRONOME_JOB_DETAIL_ERROR,
-  REQUEST_METRONOME_JOB_DETAIL_ONGOING,
-  REQUEST_METRONOME_JOB_DETAIL_SUCCESS,
-  REQUEST_METRONOME_JOBS_ERROR,
-  REQUEST_METRONOME_JOBS_ONGOING,
-  REQUEST_METRONOME_JOBS_SUCCESS,
-  REQUEST_METRONOME_JOB_CREATE_SUCCESS,
-  REQUEST_METRONOME_JOB_CREATE_ERROR,
-  REQUEST_METRONOME_JOB_STOP_RUN_SUCCESS,
-  REQUEST_METRONOME_JOB_STOP_RUN_ERROR
+  REQUEST_CHRONOS_JOB_DELETE_ERROR,
+  REQUEST_CHRONOS_JOB_DELETE_SUCCESS,
+  REQUEST_CHRONOS_JOB_UPDATE_ERROR,
+  REQUEST_CHRONOS_JOB_UPDATE_SUCCESS,
+  REQUEST_CHRONOS_JOB_RUN_ERROR,
+  REQUEST_CHRONOS_JOB_RUN_SUCCESS,
+  REQUEST_CHRONOS_JOB_SCHEDULE_UPDATE_ERROR,
+  REQUEST_CHRONOS_JOB_SCHEDULE_UPDATE_SUCCESS,
+  REQUEST_CHRONOS_JOB_DETAIL_ERROR,
+  REQUEST_CHRONOS_JOB_DETAIL_ONGOING,
+  REQUEST_CHRONOS_JOB_DETAIL_SUCCESS,
+  REQUEST_CHRONOS_JOBS_ERROR,
+  REQUEST_CHRONOS_JOBS_ONGOING,
+  REQUEST_CHRONOS_JOBS_SUCCESS,
+  REQUEST_CHRONOS_JOB_CREATE_SUCCESS,
+  REQUEST_CHRONOS_JOB_CREATE_ERROR,
+  REQUEST_CHRONOS_JOB_STOP_RUN_SUCCESS,
+  REQUEST_CHRONOS_JOB_STOP_RUN_ERROR
 } from "../constants/ActionTypes";
 import AppDispatcher from "./AppDispatcher";
-import MetronomeUtil from "../utils/MetronomeUtil";
+import ChronosUtil from "../utils/ChronosUtil";
 import Config from "../config/Config";
 
-const MetronomeActions = {
+const ChronosActions = {
   createJob(data) {
     RequestUtil.json({
-      url: `${Config.metronomeAPI}/v0/scheduled-jobs`,
+      url: `${Config.CHRONOSAPI}/v0/scheduled-jobs`,
       method: "POST",
       data,
       success() {
         AppDispatcher.handleServerAction({
-          type: REQUEST_METRONOME_JOB_CREATE_SUCCESS
+          type: REQUEST_CHRONOS_JOB_CREATE_SUCCESS
         });
       },
       error(xhr) {
         AppDispatcher.handleServerAction({
-          type: REQUEST_METRONOME_JOB_CREATE_ERROR,
+          type: REQUEST_CHRONOS_JOB_CREATE_ERROR,
           data: RequestUtil.parseResponseBody(xhr),
           xhr
         });
@@ -50,7 +50,7 @@ const MetronomeActions = {
     function(resolve, reject) {
       return function() {
         RequestUtil.json({
-          url: `${Config.metronomeAPI}/v1/jobs`,
+          url: `${Config.CHRONOSAPI}/v1/jobs`,
           data: [
             { name: "embed", value: "activeRuns" },
             { name: "embed", value: "schedules" },
@@ -58,15 +58,15 @@ const MetronomeActions = {
           ],
           success(response) {
             try {
-              const data = MetronomeUtil.parseJobs(response);
+              const data = ChronosUtil.parseJobs(response);
               AppDispatcher.handleServerAction({
-                type: REQUEST_METRONOME_JOBS_SUCCESS,
+                type: REQUEST_CHRONOS_JOBS_SUCCESS,
                 data
               });
               resolve();
             } catch (error) {
               AppDispatcher.handleServerAction({
-                type: REQUEST_METRONOME_JOBS_ERROR,
+                type: REQUEST_CHRONOS_JOBS_ERROR,
                 data: error
               });
               reject();
@@ -74,7 +74,7 @@ const MetronomeActions = {
           },
           error(xhr) {
             AppDispatcher.handleServerAction({
-              type: REQUEST_METRONOME_JOBS_ERROR,
+              type: REQUEST_CHRONOS_JOBS_ERROR,
               data: xhr.message,
               xhr
             });
@@ -82,7 +82,7 @@ const MetronomeActions = {
           },
           hangingRequestCallback() {
             AppDispatcher.handleServerAction({
-              type: REQUEST_METRONOME_JOBS_ONGOING
+              type: REQUEST_CHRONOS_JOBS_ONGOING
             });
           }
         });
@@ -93,7 +93,7 @@ const MetronomeActions = {
 
   fetchJobDetail(jobID) {
     RequestUtil.json({
-      url: `${Config.metronomeAPI}/v1/jobs/${jobID}`,
+      url: `${Config.CHRONOSAPI}/v1/jobs/${jobID}`,
       data: [
         { name: "embed", value: "activeRuns" },
         { name: "embed", value: "history" },
@@ -101,14 +101,14 @@ const MetronomeActions = {
       ],
       success(response) {
         AppDispatcher.handleServerAction({
-          type: REQUEST_METRONOME_JOB_DETAIL_SUCCESS,
-          data: MetronomeUtil.parseJob(response),
+          type: REQUEST_CHRONOS_JOB_DETAIL_SUCCESS,
+          data: ChronosUtil.parseJob(response),
           jobID
         });
       },
       error(xhr) {
         AppDispatcher.handleServerAction({
-          type: REQUEST_METRONOME_JOB_DETAIL_ERROR,
+          type: REQUEST_CHRONOS_JOB_DETAIL_ERROR,
           data: RequestUtil.parseResponseBody(xhr),
           jobID,
           xhr
@@ -116,7 +116,7 @@ const MetronomeActions = {
       },
       hangingRequestCallback() {
         AppDispatcher.handleServerAction({
-          type: REQUEST_METRONOME_JOB_DETAIL_ONGOING,
+          type: REQUEST_CHRONOS_JOB_DETAIL_ONGOING,
           jobID
         });
       }
@@ -125,18 +125,18 @@ const MetronomeActions = {
 
   deleteJob(jobID, stopCurrentJobRuns = false) {
     RequestUtil.json({
-      url: `${Config.metronomeAPI}/v1/jobs/${jobID}` +
+      url: `${Config.CHRONOSAPI}/v1/jobs/${jobID}` +
         `?stopCurrentJobRuns=${stopCurrentJobRuns}`,
       method: "DELETE",
       success() {
         AppDispatcher.handleServerAction({
-          type: REQUEST_METRONOME_JOB_DELETE_SUCCESS,
+          type: REQUEST_CHRONOS_JOB_DELETE_SUCCESS,
           jobID
         });
       },
       error(xhr) {
         AppDispatcher.handleServerAction({
-          type: REQUEST_METRONOME_JOB_DELETE_ERROR,
+          type: REQUEST_CHRONOS_JOB_DELETE_ERROR,
           data: RequestUtil.parseResponseBody(xhr),
           jobID,
           xhr
@@ -147,17 +147,17 @@ const MetronomeActions = {
 
   updateJob(jobID, data) {
     RequestUtil.json({
-      url: `${Config.metronomeAPI}/v0/scheduled-jobs/${jobID}`,
+      url: `${Config.CHRONOSAPI}/v0/scheduled-jobs/${jobID}`,
       method: "PUT",
       data,
       success() {
         AppDispatcher.handleServerAction({
-          type: REQUEST_METRONOME_JOB_UPDATE_SUCCESS
+          type: REQUEST_CHRONOS_JOB_UPDATE_SUCCESS
         });
       },
       error(xhr) {
         AppDispatcher.handleServerAction({
-          type: REQUEST_METRONOME_JOB_UPDATE_ERROR,
+          type: REQUEST_CHRONOS_JOB_UPDATE_ERROR,
           data: RequestUtil.parseResponseBody(xhr),
           xhr
         });
@@ -167,17 +167,17 @@ const MetronomeActions = {
 
   runJob(jobID) {
     RequestUtil.json({
-      url: `${Config.metronomeAPI}/v1/jobs/${jobID}/runs`,
+      url: `${Config.CHRONOSAPI}/v1/jobs/${jobID}/runs`,
       method: "POST",
       data: {},
       success() {
         AppDispatcher.handleServerAction({
-          type: REQUEST_METRONOME_JOB_RUN_SUCCESS
+          type: REQUEST_CHRONOS_JOB_RUN_SUCCESS
         });
       },
       error(xhr) {
         AppDispatcher.handleServerAction({
-          type: REQUEST_METRONOME_JOB_RUN_ERROR,
+          type: REQUEST_CHRONOS_JOB_RUN_ERROR,
           data: RequestUtil.parseResponseBody(xhr),
           xhr
         });
@@ -187,7 +187,7 @@ const MetronomeActions = {
 
   stopJobRun(jobID, jobRunID) {
     const url =
-      `${Config.metronomeAPI}/v1/jobs/${jobID}` +
+      `${Config.CHRONOSAPI}/v1/jobs/${jobID}` +
       `/runs/${jobRunID}/actions/stop`;
 
     RequestUtil.json({
@@ -196,12 +196,12 @@ const MetronomeActions = {
       data: {},
       success() {
         AppDispatcher.handleServerAction({
-          type: REQUEST_METRONOME_JOB_STOP_RUN_SUCCESS
+          type: REQUEST_CHRONOS_JOB_STOP_RUN_SUCCESS
         });
       },
       error(xhr) {
         AppDispatcher.handleServerAction({
-          type: REQUEST_METRONOME_JOB_STOP_RUN_ERROR,
+          type: REQUEST_CHRONOS_JOB_STOP_RUN_ERROR,
           data: RequestUtil.parseResponseBody(xhr),
           xhr
         });
@@ -211,18 +211,18 @@ const MetronomeActions = {
 
   updateSchedule(jobID, data) {
     RequestUtil.json({
-      url: `${Config.metronomeAPI}/v1/jobs/${jobID}/schedules/${data.id}`,
+      url: `${Config.CHRONOSAPI}/v1/jobs/${jobID}/schedules/${data.id}`,
       method: "PUT",
       data,
       success() {
         AppDispatcher.handleServerAction({
-          type: REQUEST_METRONOME_JOB_SCHEDULE_UPDATE_SUCCESS,
+          type: REQUEST_CHRONOS_JOB_SCHEDULE_UPDATE_SUCCESS,
           jobID
         });
       },
       error(xhr) {
         AppDispatcher.handleServerAction({
-          type: REQUEST_METRONOME_JOB_SCHEDULE_UPDATE_ERROR,
+          type: REQUEST_CHRONOS_JOB_SCHEDULE_UPDATE_ERROR,
           data: RequestUtil.parseResponseBody(xhr),
           jobID,
           xhr
@@ -233,14 +233,14 @@ const MetronomeActions = {
 };
 
 if (Config.useFixtures) {
-  const jobFixture = require("../../../tests/_fixtures/METRONOME/job.json");
-  const jobsFixture = require("../../../tests/_fixtures/METRONOME/jobs.json");
+  const jobFixture = require("../../../tests/_fixtures/chronos/job.json");
+  const jobsFixture = require("../../../tests/_fixtures/chronos/jobs.json");
 
   if (!global.actionTypes) {
     global.actionTypes = {};
   }
 
-  global.actionTypes.MetronomeActions = {
+  global.actionTypes.ChronosActions = {
     deleteJob: {
       event: "success",
       success: { response: {} }
@@ -267,13 +267,13 @@ if (Config.useFixtures) {
     }
   };
 
-  Object.keys(global.actionTypes.MetronomeActions).forEach(function(method) {
-    MetronomeActions[method] = RequestUtil.stubRequest(
-      MetronomeActions,
-      "MetronomeActions",
+  Object.keys(global.actionTypes.ChronosActions).forEach(function(method) {
+    ChronosActions[method] = RequestUtil.stubRequest(
+      ChronosActions,
+      "ChronosActions",
       method
     );
   });
 }
 
-module.exports = MetronomeActions;
+module.exports = ChronosActions;

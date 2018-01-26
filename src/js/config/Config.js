@@ -29,7 +29,7 @@ var Config = {
   testHistoryInterval: 10000,
   rootUrl: "",
   slackChannel: "https://dcos-community.slack.com/messages/general/",
-  stateRefresh: 5000,
+  stateRefresh: 500000,
   supportEmail: "help@dcos.io",
   tailRefresh: 10000,
   unitHealthAPIPrefix: "/system/health/v1",
