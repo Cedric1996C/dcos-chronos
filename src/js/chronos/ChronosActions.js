@@ -1,4 +1,3 @@
-// import { RequestUtil } from "mesosphere-shared-reactjs";
 import { RequestUtil } from "../chronos-reactjs";
 
 import {
@@ -20,9 +19,9 @@ import {
   REQUEST_CHRONOS_JOB_CREATE_ERROR,
   REQUEST_CHRONOS_JOB_STOP_RUN_SUCCESS,
   REQUEST_CHRONOS_JOB_STOP_RUN_ERROR
-} from "../constants/ActionTypes";
-import AppDispatcher from "./AppDispatcher";
-import ChronosUtil from "../utils/ChronosUtil";
+} from "./ActionTypes";
+import AppDispatcher from "../events/AppDispatcher";
+import ChronosUtil from "./ChronosUtil";
 import Config from "../config/Config";
 
 const ChronosActions = {

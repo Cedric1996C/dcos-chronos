@@ -23,6 +23,7 @@ var Config = {
   marathonAPIPrefix: "/service/marathon/v2",
   // marathonAPIPrefix: "/v2",
   metronomeAPI: "/service/metronome",
+  chronosAPI: "/chronos",
   productName: "DC/OS",
   productHomepageURI: "https://dcos.io",
   setInactiveAfter: 30000,
