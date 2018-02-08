@@ -1,9 +1,9 @@
 import { Form } from "reactjs-components";
 import React, { Component } from "react";
 
-import ChronosJob from "../../schemas/ChronosJob";
-import SchemaFormUtil from "../../utils/SchemaFormUtil";
-import SchemaUtil from "../../utils/SchemaUtil";
+import ChronosJob from "./ChronosJob";
+import SchemaFormUtil from "../utils/SchemaFormUtil";
+import SchemaUtil from "../utils/SchemaUtil";
 
 class ChronosJobForm extends Component {
   getChronosJob() {

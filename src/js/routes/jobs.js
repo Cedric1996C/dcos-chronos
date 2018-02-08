@@ -5,7 +5,8 @@ import React from "react";
 
 import JobDetailPage from "../pages/jobs/JobDetailPage";
 import JobsPage from "../pages/JobsPage";
-import JobsTab from "../pages/jobs/JobsTab";
+// import JobsTab from "../pages/jobs/JobsTab";
+import { JobsTab } from "../chronos";
 import JobsTaskDetailPage from "../pages/jobs/JobTaskDetailPage";
 import TaskDetailsTab
   from "../../../plugins/services/src/js/pages/task-details/TaskDetailsTab";

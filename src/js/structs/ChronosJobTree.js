@@ -42,7 +42,6 @@ module.exports = class JobTree extends Tree {
       // Convert items into instance of Job
       return new Job(item);
     });
-    console.log("JobTreeList: ", this.list);
   }
 
   getId() {

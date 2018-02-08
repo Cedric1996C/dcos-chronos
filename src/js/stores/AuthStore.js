@@ -84,8 +84,8 @@ class AuthStore extends GetSetBaseStore {
   }
 
   isLoggedIn() {
-    return true;
     // return !!CookieUtils.getUserMetadata();
+    return true;
   }
 
   getUser() {
