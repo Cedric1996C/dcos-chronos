@@ -1,8 +1,8 @@
 import { Modal } from "reactjs-components";
 import React, { Component } from "react";
 
-import ModalHeading from "../modals/ModalHeading";
-import ChronosJobForm from "../jobs/ChronosJobForm";
+import ModalHeading from "../components/modals/ModalHeading";
+import ChronosJobForm from "./ChronosJobForm";
 
 class ChronosJobModal extends Component {
   constructor(props) {
