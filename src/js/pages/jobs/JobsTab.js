@@ -253,6 +253,7 @@ class JobsTab extends mixin(StoreMixin) {
     let { id } = this.props.params;
     id = decodeURIComponent(id);
 
+    console.log("DCOSStore: ", DCOSStore);
     // Find item in root tree and default to root tree if there is no match
     const item = DCOSStore.jobTree.findItemById(id) || DCOSStore.jobTree;
 
