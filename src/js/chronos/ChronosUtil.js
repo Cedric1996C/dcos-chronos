@@ -1,172 +1,123 @@
-import Job from "./ChronosJob";
+/**
+ * Parse an item into a Job or JobTree - This method will create sub trees if
+ * needed to insert the item at the correct location
+ * (based on id/path matching).
+ * @param {{
+ *          id:string,
+ *          items:array<({id:string, items:array}|*)>,
+ * }} parent tree to add item to
+ * @param {{id:string}} item job to add to parent
+ * @param {[type]} jobsAlreadyAdded hash of id and jobs of jobs that
+ * have already been added to the parent
+ */
+function addJob(parent, item, jobsAlreadyAdded) {
+  const { id } = parent;
 
-// TODO: DCOS-7747 Move this method as well as `createFormModelFromSchema` into
-// the SchemaUtil and refactor it accordingly.
-const getMatchingProperties = (job, item) => {
-  return Object.keys(item).reduce((memo, subItem) => {
-    if (item[subItem].type === "group") {
-      Object.keys(item[subItem].properties).forEach(key => {
-        memo[key] = item[subItem].properties[key].default;
+  const itemId = item.name;
 
-        if (
-          item[subItem].properties[key].getter &&
-          !!item[subItem].properties[key].getter(job)
-        ) {
-          memo[key] = item[subItem].properties[key].getter(job);
-        }
-      });
+  if (itemId.startsWith(".") || itemId.endsWith(".")) {
+    throw new Error(
+      `Id (${itemId}) must not start with a leading dot (".") ` +
+      "and should not end with a dot."
+    );
+  }
 
-      return memo;
+  if (!itemId.startsWith(id)) {
+    throw new Error(`item id (${itemId}) doesn't match tree id (${id})`);
+  }
+
+  // Check if the item (group or job) has already been added
+  if (jobsAlreadyAdded[itemId]) {
+    // handle merge data for job, not for group
+    item = Object.assign(jobsAlreadyAdded[itemId], item);
+
+    return;
+  }
+
+  // Get the parent id (e.g. group) by matching everything but the item
+  // name including the preceding dot "." (e.g. ".name").
+  const [parentId] = itemId.match(/.*?(?=\.?[^.]+\.?$)/);
+
+  if (parentId == null) {
+    return;
+  }
+
+  // Add item to the current tree if it's the actual parent tree
+  if (id === parentId) {
+    // Initialize items, if they don't already exist, before push
+    if (!parent.items) {
+      parent.items = [];
     }
 
-    if (item[subItem].type === "object") {
-      memo[subItem] = getMatchingProperties(job, item[subItem].properties);
+    // Store child as added
+    jobsAlreadyAdded[item.id] = item;
+    parent.items.push(ChronosUtil.parseJob(item));
 
-      return memo;
+    return;
+  }
+
+  // Find or create corresponding parent tree and add it to the tree
+  let subParent = jobsAlreadyAdded[parentId];
+  if (!subParent) {
+    subParent = { id: parentId, items: [] };
+    addJob(parent, subParent, jobsAlreadyAdded);
+  }
+
+  // Add item to parent tree
+  addJob(subParent, item, jobsAlreadyAdded);
+}
+
+const ChronosUtil = {
+  /**
+   * [parseJobs description]
+   * @param  {array} jobs to be turned into an acceptable structure
+   * for Job or JobTree
+   * @return {{
+   *          id:string,
+   *          items:array<({id:string, items:array}|*)>,
+   * }} jobs and groups in a tree structure
+   */
+  parseJobs(jobs) {
+    const rootTree = { id: "" };
+    const jobsAlreadyAdded = {
+      [rootTree.id]: rootTree
+    };
+
+    if (!Array.isArray(jobs)) {
+      jobs = [jobs];
     }
 
-    memo[subItem] = item[subItem].default;
-
-    if (item[subItem].getter) {
-      memo[subItem] = item[subItem].getter(job);
-    }
-
-    return memo;
-  }, {});
-};
-
-const JobUtil = {
-  createJobFromFormModel(formModel, spec = {}) {
-    if (formModel == null) {
-      return new Job();
-    }
-
-    const {
-      general = {
-      id: null
-    },
-      labels = {},
-      docker,
-      schedule
-    } = formModel;
-
-    spec.id = general.id;
-    spec.description = general.description;
-
-    if (labels != null && labels.items != null) {
-      spec.labels = labels.items.reduce(function (memo, { key, value }) {
-        if (key == null) {
-          return memo;
-        }
-
-        // The 'undefined' value is not rendered by the JSON.stringify,
-        // so make sure empty environment variables are not left unrendered
-        memo[key] = value || "";
-
-        return memo;
-      }, {});
-    }
-
-    spec.run = Object.assign(spec.run || {}, {
-      cmd: general.cmd,
-      cpus: general.cpus,
-      mem: general.mem,
-      disk: general.disk
+    jobs.forEach(function (job) {
+      addJob(rootTree, job, jobsAlreadyAdded);
     });
 
-    if (docker && docker.image) {
-      Object.assign(spec.run, { docker });
-    }
-
-    // Reset schedules
-    spec.schedules = [];
-
-    // Only transfer schedule if checkbox is set, and create job with reasonable
-    // defaults
-    if (!schedule || schedule.runOnSchedule) {
-      const {
-        id = "default",
-        enabled = true,
-        cron,
-        timezone,
-        concurrencyPolicy = "ALLOW",
-        startingDeadlineSeconds
-      } = schedule || {};
-
-      spec.schedules.push({
-        id,
-        enabled,
-        cron,
-        timezone,
-        concurrencyPolicy,
-        startingDeadlineSeconds
-      });
-    }
-
-    return new Job(spec);
+    return rootTree;
   },
 
-  createFormModelFromSchema(schema, job = new Job()) {
-    return getMatchingProperties(job, schema.properties);
-  },
+  parseJob(job) {
+    let { history } = job;
 
-  createJobSpecFromJob(job) {
-    const spec = JSON.parse(JSON.stringify(job));
+    if (history == null) {
+      return job;
+    }
 
-    spec.id = job.getId() || null;
-    spec.description = job.getDescription();
+    let { failedFinishedRuns = [], successfulFinishedRuns = [] } = history;
 
-    spec.run = Object.assign(spec.run || {}, {
-      cmd: job.getCommand(),
-      cpus: job.getCpus(),
-      mem: job.getMem(),
-      disk: job.getDisk()
+    failedFinishedRuns = failedFinishedRuns.map(function (jobRun) {
+      return Object.assign({}, jobRun, { status: "FAILED", jobId: job.id });
     });
 
-    const labels = job.getLabels();
-    if (Object.keys(labels).length > 0) {
-      spec.labels = labels;
-    }
-
-    const docker = job.getDocker();
-    if (docker.image) {
-      Object.assign(spec.run, { docker });
-    }
-
-    const [schedule] = job.getSchedules();
-    if (schedule) {
-      const {
-        id = "default",
-        enabled = true,
-        cron,
-        timezone,
-        concurrencyPolicy = "ALLOW",
-        startingDeadlineSeconds
-      } = schedule;
-      // Transfer schedule as with reasonable defaults
-      spec.schedules = [
-        {
-          id,
-          enabled,
-          cron,
-          timezone,
-          concurrencyPolicy,
-          startingDeadlineSeconds
-        }
-      ];
-    } else {
-      spec.schedules = [];
-    }
-
-    return spec;
-  },
-
-  parseJob: data => {
-    const arr = data || {};
-    arr.map((job, index) => {
-      return null;
+    successfulFinishedRuns = successfulFinishedRuns.map(function (jobRun) {
+      return Object.assign({}, jobRun, { status: "COMPLETED", jobId: job.id });
     });
+
+    history = Object.assign({}, history, {
+      failedFinishedRuns,
+      successfulFinishedRuns
+    });
+
+    return Object.assign({}, job, { history });
   }
 };
 
-module.exports = JobUtil;
+module.exports = ChronosUtil;

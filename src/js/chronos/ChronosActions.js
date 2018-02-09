@@ -19,7 +19,7 @@ import {
   REQUEST_CHRONOS_JOB_CREATE_ERROR,
   REQUEST_CHRONOS_JOB_STOP_RUN_SUCCESS,
   REQUEST_CHRONOS_JOB_STOP_RUN_ERROR
-} from "./ActionTypes";
+} from "../constants/ActionTypes";
 import AppDispatcher from "../events/AppDispatcher";
 import ChronosUtil from "./ChronosUtil";
 import Config from "../config/Config";
@@ -56,7 +56,6 @@ const ChronosActions = {
           },
           success(response) {
             try {
-              console.log("Response body: ", response);
               const data = ChronosUtil.parseJobs(response);
               console.log("chronos data: ", data);
               AppDispatcher.handleServerAction({

@@ -75,11 +75,11 @@ class DCOSStore extends EventEmitter {
         jobTree: new JobTree(),
         dataReceived: false
       },
-      mesos: new SummaryList()
-      // chronos: {
-      //   jobTree: new ChronosJobTree(),
-      //   dataReceived: false
-      // }
+      mesos: new SummaryList(),
+      chronos: {
+        jobTree: new ChronosJobTree(),
+        dataReceived: false
+      }
     };
 
     this.debouncedEvents = new Map();
@@ -352,6 +352,7 @@ class DCOSStore extends EventEmitter {
 
     // Update job tree and data received flag
     chronos.jobTree = ChronosStore.jobTree;
+    console.log("dcos.chronos.jobtree: ", chronos.jobTree);
     chronos.dataReceived = true;
 
     this.emit(DCOS_CHANGE);

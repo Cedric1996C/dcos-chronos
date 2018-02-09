@@ -10,7 +10,7 @@ import AlertPanelHeader from "../../components/AlertPanelHeader";
 import FilterBar from "../../components/FilterBar";
 import FilterHeadline from "../../components/FilterHeadline";
 import JobsBreadcrumbs from "../../components/breadcrumbs/JobsBreadcrumbs";
-import JobsTable from "../../pages/jobs/JobsTable";
+import JobsTable from "./JobsTable";
 import JobSearchFilter from "../../components/JobSearchFilter";
 import JobFilterTypes from "../../constants/JobFilterTypes";
 import JobFormModal from "../../components/modals/JobFormModal";
