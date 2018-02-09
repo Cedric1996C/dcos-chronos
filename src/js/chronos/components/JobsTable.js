@@ -85,6 +85,8 @@ class JobsTable extends React.Component {
         status = job.getScheduleStatus();
       }
 
+      console.log("getData: ",job);
+      
       return {
         id: job.getId(),
         isGroup,

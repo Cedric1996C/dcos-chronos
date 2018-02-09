@@ -14,23 +14,23 @@ class JobStateFilter extends Component {
     const items = [
       {
         name: "Success",
-        num: 3
-      },
-      {
-        name: "Scheduling",
-        num: 9
-      },
-      {
-        name: "In Queue",
         num: 1
       },
       {
+        name: "Scheduling",
+        num: 2
+      },
+      {
+        name: "In Queue",
+        num: 3
+      },
+      {
         name: "Failed",
-        num: 12
+        num: 4
       },
       {
         name: "New",
-        num: 2
+        num: 5
       }
     ];
 
@@ -39,6 +39,7 @@ class JobStateFilter extends Component {
       var dropdownHtml = <a>{selectedHtml}</a>;
 
       var state = {
+        id: item.num,
         name: item.name,
         html: dropdownHtml,
         selectedHtml

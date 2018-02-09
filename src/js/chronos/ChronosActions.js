@@ -57,7 +57,7 @@ const ChronosActions = {
           success(response) {
             try {
               const data = ChronosUtil.parseJobs(response);
-              console.log("chronos data: ", data);
+
               AppDispatcher.handleServerAction({
                 type: REQUEST_CHRONOS_JOBS_SUCCESS,
                 data
