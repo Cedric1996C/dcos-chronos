@@ -22,7 +22,7 @@ import DeploymentsList
 import Item from "../structs/Item";
 import Framework from "../../../plugins/services/src/js/structs/Framework";
 import JobTree from "../structs/JobTree";
-import ChronosJobTree from "../structs/ChronosJobTree";
+import ChronosJobTree from "../chronos/ChronosJobTree";
 import MarathonStore
   from "../../../plugins/services/src/js/stores/MarathonStore";
 import MesosSummaryStore from "./MesosSummaryStore";
