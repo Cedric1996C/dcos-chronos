@@ -20,18 +20,17 @@ import Page from "../../components/Page";
 import ServiceFilterTypes
   from "../../../../plugins/services/src/js/constants/ServiceFilterTypes";
 
-// import JobAddBtn from "../../components/jobs/JodAddBtn";
-// import JobStateFilter from "../../components/jobs/JobStateFilter";
-// import ChronosJobModal from "../../components/jobs/ChronosJobModal";
-// import ChronosJobModal from "../../components/modals/ChronosJobModal";
+import JobAddBtn from "../../components/jobs/JodAddBtn";
+import JobStateFilter from "../../components/jobs/JobStateFilter";
+import ChronosJobModal from "../ChronosJobModal";
 
 const METHODS_TO_BIND = [
   "getHeadline",
   "handleFilterChange",
-  "handleCloseJobFormModal",
-  "handleOpenJobFormModal",
   "resetFilter",
-  "resetFilterQueryParams"
+  "resetFilterQueryParams",
+  "handleCloseJobModal",
+  "handleOpenJobModal"
 ];
 
 var DEFAULT_FILTER_OPTIONS = {
@@ -44,7 +43,7 @@ class JobsTab extends mixin(StoreMixin) {
 
     this.state = Object.assign(
       {
-        isJobFormModalOpen: false
+        isJobModalOpen: false
       },
       DEFAULT_FILTER_OPTIONS
     );
@@ -52,7 +51,7 @@ class JobsTab extends mixin(StoreMixin) {
     this.store_listeners = [
       { name: "dcos", events: ["change"], suppressUpdate: false },
       {
-        name: "metronome",
+        name: "chronos",
         events: ["change", "jobCreateSuccess"],
         suppressUpdate: false
       }
@@ -73,12 +72,13 @@ class JobsTab extends mixin(StoreMixin) {
     this.updateFromProps(nextProps);
   }
 
-  handleCloseJobFormModal() {
-    this.setState({ isJobFormModalOpen: false });
+  // Chronos Job Adding
+  handleCloseJobModal() {
+    this.setState({ isJobModalOpen: false });
   }
 
-  handleOpenJobFormModal() {
-    this.setState({ isJobFormModalOpen: true });
+  handleOpenJobModal() {
+    this.setState({ isJobModalOpen: true });
   }
 
   handleFilterChange(filterValue) {
@@ -97,7 +97,7 @@ class JobsTab extends mixin(StoreMixin) {
     const { location: { pathname } } = this.props;
     const query = Object.assign({}, location.query);
 
-    Object.values(ServiceFilterTypes).forEach(function(filterKey) {
+    Object.values(ServiceFilterTypes).forEach(function (filterKey) {
       delete query[filterKey];
     });
 
@@ -145,6 +145,7 @@ class JobsTab extends mixin(StoreMixin) {
   getFilteredJobs(item) {
     const { searchString } = this.state;
     let jobs = item.getItems();
+    console.log("getfilterjobs: ", jobs);
 
     if (searchString) {
       const filterProperties = Object.assign({}, item.getFilterProperties(), {
@@ -154,6 +155,7 @@ class JobsTab extends mixin(StoreMixin) {
       });
 
       jobs = item.filterItemsByText(searchString, filterProperties).getItems();
+      console.log("isSearching: ", searchString, jobs);
     }
 
     return jobs;
@@ -161,19 +163,18 @@ class JobsTab extends mixin(StoreMixin) {
 
   getJobTreeView(item, modal) {
     const filteredJobs = this.getFilteredJobs(item);
-    
+    console.log("filterJobs: ", filteredJobs);
+
     return (
       <Page>
         <Page.Header
-          addButton={{
-            label: "Create a job",
-            onItemSelect: this.handleOpenJobFormModal
-          }}
           breadcrumbs={<JobsBreadcrumbs jobID={item.id} />}
         />
         <div className="flex-grow">
           {this.getHeadline(item, filteredJobs)}
           <FilterBar>
+            <JobAddBtn onClick={this.handleOpenJobModal} />
+            <JobStateFilter />
             <JobSearchFilter
               onChange={this.handleFilterChange}
               value={this.state.searchString}
@@ -214,6 +215,8 @@ class JobsTab extends mixin(StoreMixin) {
       return this.getJobTreeView(item, modal);
     }
 
+    console.log("item.getItems().length == 0");
+
     // JobDetailPage
     if (this.props.params.id) {
       return this.props.children;
@@ -241,17 +244,18 @@ class JobsTab extends mixin(StoreMixin) {
 
     // Find item in root tree and default to root tree if there is no match
     const item = DCOSStore.jobTree.findItemById(id) || DCOSStore.jobTree;
-
+    const chronosItem = DCOSStore.chronosJobTree.findItemById(id) || DCOSStore.chronosJobTree;
+    console.log("chronosItem: ", chronosItem);
     const modal = (
       <div>
-        <JobFormModal
-          open={this.state.isJobFormModalOpen}
-          onClose={this.handleCloseJobFormModal}
+        <ChronosJobModal
+          open={this.state.isJobModalOpen}
+          onClose={this.handleCloseJobModal}
         />
       </div>
     );
 
-    return this.getContents(item, modal);
+    return this.getContents(chronosItem, modal);
   }
 }
 

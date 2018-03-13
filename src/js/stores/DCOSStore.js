@@ -3,6 +3,7 @@ import PluginSDK, { Hooks } from "PluginSDK";
 
 import {
   METRONOME_JOBS_CHANGE,
+  CHRONOS_JOBS_CHANGE,
   DCOS_CHANGE,
   MESOS_SUMMARY_CHANGE
 } from "../constants/EventTypes";
@@ -21,16 +22,19 @@ import DeploymentsList
 import Item from "../structs/Item";
 import Framework from "../../../plugins/services/src/js/structs/Framework";
 import JobTree from "../structs/JobTree";
+import ChronosJobTree from "../chronos/ChronosJobTree";
 import MarathonStore
   from "../../../plugins/services/src/js/stores/MarathonStore";
 import MesosSummaryStore from "./MesosSummaryStore";
 import MetronomeStore from "./MetronomeStore";
+import ChronosStore from "../chronos/ChronosStore";
 import NotificationStore from "./NotificationStore";
 import ServiceTree from "../../../plugins/services/src/js/structs/ServiceTree";
 import SummaryList from "../structs/SummaryList";
 
 const METHODS_TO_BIND = [
   "onMetronomeChange",
+  "onChronosChange",
   "onMarathonGroupsChange",
   "onMarathonQueueChange",
   "onMarathonDeploymentsChange",
@@ -71,7 +75,11 @@ class DCOSStore extends EventEmitter {
         jobTree: new JobTree(),
         dataReceived: false
       },
-      mesos: new SummaryList()
+      mesos: new SummaryList(),
+      chronos: {
+        jobTree: new ChronosJobTree(),
+        dataReceived: false
+      }
     };
 
     this.debouncedEvents = new Map();
@@ -95,6 +103,14 @@ class DCOSStore extends EventEmitter {
         event: METRONOME_JOBS_CHANGE,
         handler: this.onMetronomeChange,
         store: MetronomeStore
+      });
+    }
+
+    if (Hooks.applyFilter("hasCapability", false, "chronosAPI")) {
+      proxyListeners.push({
+        event: CHRONOS_JOBS_CHANGE,
+        handler: this.onChronosChange,
+        store: ChronosStore
       });
     }
 
@@ -331,6 +347,17 @@ class DCOSStore extends EventEmitter {
     this.emit(DCOS_CHANGE);
   }
 
+  onChronosChange() {
+    const { chronos } = this.data;
+
+    // Update job tree and data received flag
+    chronos.jobTree = ChronosStore.jobTree;
+    console.log("dcos.chronos.jobtree: ", chronos.jobTree);
+    chronos.dataReceived = true;
+
+    this.emit(DCOS_CHANGE);
+  }
+
   addProxyListeners() {
     this.getProxyListeners().forEach(function(item) {
       item.store.addChangeListener(item.event, item.handler);
@@ -392,6 +419,13 @@ class DCOSStore extends EventEmitter {
   }
 
   /**
+   * @type {ChronosJobTree}
+   */
+  get chronosJobTree() {
+    return this.data.chronos.jobTree;
+  }
+
+  /**
    * @type {DeploymentsList}
    */
   get deploymentsList() {
@@ -442,6 +476,10 @@ class DCOSStore extends EventEmitter {
 
   get jobDataReceived() {
     return this.data.metronome.dataReceived;
+  }
+
+  get chronosJobDataReceived() {
+    return this.data.chronos.dataReceived;
   }
 
   get serviceDataReceived() {

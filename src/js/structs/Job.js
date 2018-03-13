@@ -96,8 +96,12 @@ module.exports = class Job extends Item {
     return { status, time };
   }
 
+  // getName() {
+  //   return this.getId().split(".").pop();
+  // }
+
   getName() {
-    return this.getId().split(".").pop();
+    return this.name;
   }
 
   getSchedules() {
